@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TypoDeformer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="scheme-neon">
+
+  <header class="app-header">
+    <div class="logo">TYPO<span>DEFORMER</span></div>
+    <div class="header-hint">Text deformation & stylization studio</div>
+  </header>
+
+  <div class="app-layout">
+
+    <!-- ─── LEFT PANEL ─── -->
+    <aside class="sidebar" id="sidebar">
+
+      <section class="panel-section">
+        <div class="section-label">TEXT</div>
+        <textarea id="text-input" spellcheck="false">GLITCH</textarea>
+        <div class="row-control">
+          <label>Font size</label>
+          <input type="range" id="font-size" min="16" max="320" value="128">
+          <span class="val-badge" id="font-size-val">128</span>
+        </div>
+        <div class="row-control">
+          <label>Weight</label>
+          <input type="range" id="font-weight" min="100" max="900" step="100" value="700">
+          <span class="val-badge" id="font-weight-val">700</span>
+        </div>
+        <div class="row-control">
+          <label>Letter spacing</label>
+          <input type="range" id="letter-spacing" min="-20" max="80" value="0">
+          <span class="val-badge" id="letter-spacing-val">0</span>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-label">FONT</div>
+        <div class="font-upload-area" id="font-drop-zone">
+          <input type="file" id="font-file" accept=".ttf,.otf,.woff,.woff2" hidden>
+          <button class="btn-secondary" id="btn-upload-font">Upload .ttf / .otf</button>
+          <span class="font-name-label" id="font-name-label">System default</span>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-label">COLOR SCHEME</div>
+        <div class="scheme-grid">
+          <button class="scheme-btn active" data-scheme="neon">NEON</button>
+          <button class="scheme-btn" data-scheme="retro">RETRO</button>
+          <button class="scheme-btn" data-scheme="dark">DARK</button>
+          <button class="scheme-btn" data-scheme="light">LIGHT</button>
+          <button class="scheme-btn" data-scheme="vapor">VAPOR</button>
+          <button class="scheme-btn" data-scheme="matrix">MATRIX</button>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-label">EFFECTS</div>
+        <div id="effects-list"></div>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-label">ANIMATION</div>
+        <label class="toggle-row">
+          <span>Live animation</span>
+          <div class="toggle-wrap">
+            <input type="checkbox" id="anim-toggle">
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </div>
+        </label>
+        <div class="row-control">
+          <label>Speed</label>
+          <input type="range" id="anim-speed" min="0.1" max="5" step="0.1" value="1">
+          <span class="val-badge" id="anim-speed-val">1.0×</span>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-label">CANVAS SIZE</div>
+        <div class="size-presets">
+          <button class="size-btn active" data-w="800" data-h="400">800×400</button>
+          <button class="size-btn" data-w="1200" data-h="600">1200×600</button>
+          <button class="size-btn" data-w="1080" data-h="1080">1080×1080</button>
+          <button class="size-btn" data-w="1920" data-h="1080">1920×1080</button>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-label">EXPORT</div>
+        <div class="export-grid">
+          <button class="btn-export" id="export-png">PNG</button>
+          <button class="btn-export" id="export-svg">SVG</button>
+          <button class="btn-export btn-gif" id="export-gif">GIF <span class="gif-frames-badge" id="gif-frames-badge">16f</span></button>
+        </div>
+        <div class="row-control" id="gif-frames-row">
+          <label>GIF frames</label>
+          <input type="range" id="gif-frames" min="4" max="60" step="2" value="16">
+          <span class="val-badge" id="gif-frames-val">16</span>
+        </div>
+        <div id="export-progress" class="export-progress" hidden>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          <span id="progress-label">Rendering…</span>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- ─── CANVAS AREA ─── -->
+    <main class="canvas-area">
+      <div class="canvas-wrapper" id="canvas-wrapper">
+        <canvas id="main-canvas" width="800" height="400"></canvas>
+      </div>
+      <div class="canvas-meta">
+        <span id="canvas-size-label">800 × 400 px</span>
+        <span class="dot-sep">·</span>
+        <span id="fps-label">— fps</span>
+      </div>
+    </main>
+
+  </div>
+
+  <script src="js/effects.js"></script>
+  <script src="js/exporter.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
