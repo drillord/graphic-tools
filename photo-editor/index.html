@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FRAME — Cinematic Photo Editor</title>
+<title>FRAME — Photo Editor</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -14,16 +14,14 @@
   --border:#242424;
   --border2:#2e2e2e;
   --text:#c2c2c2;
-  --text-dim:#5a5a5a;
+  --text-dim:#4e4e4e;
   --text-mid:#888;
   --accent:#c8a96e;
   --accent-dim:#7a6640;
   --accent-bg:rgba(200,169,110,0.08);
-  --red:#e05050;
 }
 
 html,body{height:100%;overflow:hidden}
-
 body{
   background:var(--bg);
   color:var(--text);
@@ -32,13 +30,13 @@ body{
   display:flex;
 }
 
-::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:3px}
+::-webkit-scrollbar-thumb{background:#262626;border-radius:2px}
 
 /* ─── SIDEBAR ─── */
 #sidebar{
-  width:256px;
+  width:282px;
   flex-shrink:0;
   background:var(--panel);
   border-right:1px solid var(--border);
@@ -47,399 +45,263 @@ body{
   overflow:hidden;
 }
 
-.s-header{
-  padding:14px 16px 12px;
+.s-head{
+  padding:13px 15px 11px;
   border-bottom:1px solid var(--border);
   flex-shrink:0;
 }
-
-.app-name{
-  font-size:13px;
-  font-weight:700;
-  letter-spacing:0.12em;
-  color:var(--accent);
-  text-transform:uppercase;
-}
-
-.app-sub{
-  font-size:10px;
-  color:var(--text-dim);
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  margin-top:2px;
-}
+.app-name{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--accent);text-transform:uppercase}
+.app-sub{font-size:10px;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
 
 .s-scroll{flex:1;overflow-y:auto;overflow-x:hidden}
 
-/* Load */
-.s-load{
-  padding:10px 12px;
-  border-bottom:1px solid var(--border);
-}
-
+/* Open button */
+.s-open{padding:9px 12px;border-bottom:1px solid var(--border)}
 .btn-file{
-  width:100%;
-  padding:7px 10px;
-  background:var(--panel2);
-  border:1px solid var(--border2);
-  border-radius:5px;
-  color:var(--text);
-  font-size:11px;
-  cursor:pointer;
-  text-align:center;
-  font-family:inherit;
-  transition:border-color .15s,background .15s;
-  letter-spacing:0.02em;
+  width:100%;padding:7px 10px;
+  background:var(--panel2);border:1px solid var(--border2);border-radius:5px;
+  color:var(--text);font-size:11px;cursor:pointer;text-align:center;
+  font-family:inherit;transition:border-color .15s,background .15s;
 }
-.btn-file:hover{background:#252525;border-color:#383838}
-.btn-file:active{background:#1a1a1a}
+.btn-file:hover{background:#202020;border-color:#363636}
 
-/* Section */
-.fx-section{border-bottom:1px solid var(--border)}
+/* ─── SECTION ─── */
+.fx-sec{border-bottom:1px solid var(--border)}
 
 .fx-head{
-  display:flex;
-  align-items:center;
-  padding:8px 12px;
-  cursor:pointer;
-  user-select:none;
+  display:flex;align-items:center;gap:8px;
+  padding:9px 12px;cursor:pointer;user-select:none;
   transition:background .1s;
-  gap:8px;
 }
-.fx-head:hover{background:rgba(255,255,255,0.02)}
+.fx-head:hover{background:rgba(255,255,255,.02)}
 
-/* Toggle switch */
-.tog{
-  position:relative;
-  width:26px;
-  height:14px;
-  flex-shrink:0;
-}
+/* Toggle */
+.tog{position:relative;width:26px;height:14px;flex-shrink:0}
 .tog input{opacity:0;position:absolute;width:0;height:0}
-.tog-track{
-  position:absolute;
-  inset:0;
-  background:#252525;
-  border-radius:7px;
-  border:1px solid #333;
-  transition:background .15s,border-color .15s;
-  cursor:pointer;
-}
+.tog-track{position:absolute;inset:0;background:#232323;border:1px solid #333;border-radius:7px;transition:background .15s,border-color .15s;cursor:pointer}
 .tog input:checked+.tog-track{background:var(--accent-dim);border-color:var(--accent-dim)}
-.tog-thumb{
-  position:absolute;
-  top:2px;left:2px;
-  width:10px;height:10px;
-  background:#555;
-  border-radius:50%;
-  transition:transform .15s,background .15s;
-  pointer-events:none;
-}
+.tog-thumb{position:absolute;top:2px;left:2px;width:10px;height:10px;background:#4a4a4a;border-radius:50%;transition:transform .15s,background .15s;pointer-events:none}
 .tog input:checked~.tog-thumb{transform:translateX(12px);background:var(--accent)}
 
-.fx-name{
-  flex:1;
-  font-size:12px;
-  font-weight:500;
-  color:var(--text);
-}
+.fx-name{flex:1;font-size:12px;font-weight:500}
+.fx-tag{font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase}
+.chev{width:10px;height:10px;flex-shrink:0;opacity:.25;transition:transform .2s}
+.chev.open{transform:rotate(180deg)}
 
-.fx-tag{
-  font-size:9px;
-  color:var(--text-dim);
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-}
-
-.fx-chevron{
-  width:10px;
-  height:10px;
-  flex-shrink:0;
-  opacity:0.3;
-  transition:transform .2s;
-}
-.fx-chevron.open{transform:rotate(180deg)}
-
-.fx-body{
-  display:none;
-  padding:2px 12px 10px;
-}
+.fx-body{display:none;padding:0 12px 11px}
 .fx-body.open{display:block}
 
-/* Slider row */
-.row{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  margin-top:7px;
+/* Light section (no toggle, always open) */
+.light-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 12px 6px;
 }
+.light-title{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-mid)}
+.light-body{padding:0 12px 10px}
 
-.row-label{
-  width:56px;
-  font-size:10px;
-  color:var(--text-dim);
-  flex-shrink:0;
-  letter-spacing:0.02em;
+/* Sub-group label */
+.sub-label{
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-dim);margin:8px 0 2px;
 }
+.divider{height:1px;background:var(--border);margin:8px 0}
+
+/* ─── SLIDER ROW ─── */
+.row{display:flex;align-items:center;gap:6px;margin-top:6px}
+.row-label{width:82px;font-size:11px;color:var(--text-mid);flex-shrink:0;letter-spacing:.01em}
 
 input[type=range]{
   -webkit-appearance:none;
-  flex:1;
-  height:3px;
-  background:linear-gradient(to right,var(--accent-dim) 0%,var(--accent-dim) var(--pct,40%),#2a2a2a var(--pct,40%));
-  border-radius:2px;
-  outline:none;
-  cursor:pointer;
+  flex:1;height:3px;border-radius:2px;outline:none;cursor:pointer;
+  background:#222; /* overridden by JS */
 }
 input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none;
-  width:11px;height:11px;
-  border-radius:50%;
+  width:11px;height:11px;border-radius:50%;
   background:var(--accent);
-  box-shadow:0 0 0 2px rgba(200,169,110,.2);
-  cursor:pointer;
-  transition:transform .1s;
+  box-shadow:0 0 0 2px rgba(200,169,110,.18);
+  cursor:pointer;transition:transform .1s;
 }
-input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.25)}
 
 .row-val{
-  width:24px;
-  text-align:right;
-  font-size:10px;
-  color:var(--text-dim);
-  font-variant-numeric:tabular-nums;
-  flex-shrink:0;
+  width:26px;text-align:right;font-size:10px;color:var(--text-dim);
+  font-variant-numeric:tabular-nums;flex-shrink:0;
 }
 
-/* Select */
-.fx-select{
-  width:100%;
-  margin-top:7px;
-  padding:5px 7px;
-  background:var(--panel2);
-  border:1px solid var(--border2);
-  border-radius:4px;
-  color:var(--text);
-  font-size:11px;
-  font-family:inherit;
-  outline:none;
-  cursor:pointer;
-}
-.fx-select:focus{border-color:#3a3a3a}
-
-/* Radio group */
-.radio-group{
-  display:flex;
-  gap:4px;
-  margin-top:7px;
-}
+/* Radio */
+.radio-group{display:flex;gap:4px;margin-top:7px}
 .radio-opt{
-  flex:1;
-  padding:4px 0;
-  background:var(--panel2);
-  border:1px solid var(--border2);
-  border-radius:4px;
-  color:var(--text-dim);
-  font-size:10px;
-  cursor:pointer;
-  text-align:center;
-  font-family:inherit;
-  transition:background .1s,border-color .1s,color .1s;
-  letter-spacing:0.04em;
+  flex:1;padding:4px 0;background:var(--panel2);
+  border:1px solid var(--border2);border-radius:4px;
+  color:var(--text-dim);font-size:10px;cursor:pointer;
+  text-align:center;font-family:inherit;
+  transition:background .1s,border-color .1s,color .1s;letter-spacing:.04em;
 }
-.radio-opt.active{
-  background:var(--accent-bg);
-  border-color:var(--accent-dim);
-  color:var(--accent);
-}
+.radio-opt.active{background:var(--accent-bg);border-color:var(--accent-dim);color:var(--accent)}
 
 /* ─── ACTIONS ─── */
-.s-actions{
-  padding:10px 12px;
-  border-top:1px solid var(--border);
-  flex-shrink:0;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-
+.s-actions{padding:9px 12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:5px}
 .btn{
-  padding:7px 10px;
-  border-radius:5px;
-  border:none;
-  font-size:11px;
-  font-family:inherit;
-  cursor:pointer;
-  transition:opacity .15s,background .15s;
-  letter-spacing:0.02em;
+  padding:7px 10px;border-radius:5px;border:none;
+  font-size:11px;font-family:inherit;cursor:pointer;
+  transition:opacity .15s;letter-spacing:.02em;
 }
 .btn:hover{opacity:.82}
 .btn:active{opacity:.6}
-
 .btn-primary{background:var(--accent);color:#111;font-weight:600}
 .btn-secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border2)}
 .btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border)}
-
-.export-row{display:flex;gap:5px}
-.export-row .btn{flex:1}
-
-.q-select{
-  padding:6px 5px;
-  background:var(--panel2);
-  border:1px solid var(--border2);
-  border-radius:5px;
-  color:var(--text);
-  font-size:10px;
-  font-family:inherit;
-  outline:none;
-  cursor:pointer;
-  flex-shrink:0;
-}
-
 .btn-row{display:flex;gap:5px}
 .btn-row .btn{flex:1}
+.export-row{display:flex;gap:5px}
+.export-row .btn{flex:1}
+.q-sel{
+  padding:6px 5px;background:var(--panel2);border:1px solid var(--border2);
+  border-radius:5px;color:var(--text);font-size:10px;font-family:inherit;
+  outline:none;cursor:pointer;flex-shrink:0;
+}
 
 /* ─── CANVAS AREA ─── */
 #canvas-area{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  background:var(--bg);
-  overflow:hidden;
+  flex:1;display:flex;align-items:center;justify-content:center;
+  position:relative;background:#090909;overflow:hidden;
 }
 
-/* Dropzone */
 #dropzone{
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:14px;
-  pointer-events:none;
-  transition:background .15s;
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;pointer-events:none;
 }
-
 .drop-ring{
-  width:72px;height:72px;
-  border:1.5px dashed #2e2e2e;
-  border-radius:18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  width:72px;height:72px;border:1.5px dashed #2a2a2a;border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
   transition:border-color .15s;
 }
+.drop-ring svg{opacity:.25;transition:opacity .15s}
+.drop-text{text-align:center;color:#333;line-height:1.75;font-size:12px}
+.drop-text strong{color:#4e4e4e;font-size:13px;display:block;margin-bottom:2px;font-weight:500}
 
-.drop-ring svg{opacity:0.3;transition:opacity .15s}
-
-.drop-text{
-  text-align:center;
-  color:#3a3a3a;
-  line-height:1.7;
-  font-size:12px;
-}
-.drop-text strong{color:#555;font-size:13px;display:block;margin-bottom:2px;font-weight:500}
-
-#canvas-area.drag-over #dropzone{background:rgba(200,169,110,0.04)}
+#canvas-area.drag-over #dropzone{background:rgba(200,169,110,.04)}
 #canvas-area.drag-over .drop-ring{border-color:var(--accent-dim)}
-#canvas-area.drag-over .drop-ring svg{opacity:0.6}
-#canvas-area.drag-over .drop-text{color:#666}
+#canvas-area.drag-over .drop-ring svg{opacity:.55}
 
-/* Canvas */
 #canvas{
   display:none;
-  max-width:calc(100% - 24px);
-  max-height:calc(100vh - 56px);
+  max-width:calc(100% - 20px);max-height:calc(100vh - 48px);
   border-radius:2px;
-  image-rendering:auto;
 }
 
 /* Bottom bar */
 #bottom-bar{
-  position:absolute;
-  bottom:14px;
-  display:none;
-  align-items:center;
-  gap:6px;
-  background:rgba(22,22,22,0.92);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  padding:5px 6px 5px 10px;
-  border-radius:7px;
-  border:1px solid var(--border);
+  position:absolute;bottom:14px;display:none;align-items:center;gap:5px;
+  background:rgba(20,20,20,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  padding:5px 6px 5px 10px;border-radius:7px;border:1px solid var(--border);
 }
-
-.info{font-size:10px;color:var(--text-dim);letter-spacing:0.04em}
-
+.info{font-size:10px;color:var(--text-dim);letter-spacing:.04em}
 .bb-btn{
-  padding:4px 10px;
-  background:transparent;
-  border:1px solid var(--border2);
-  border-radius:4px;
-  color:var(--text-mid);
-  font-size:10px;
-  cursor:pointer;
-  font-family:inherit;
-  transition:background .1s,color .1s,border-color .1s;
-  letter-spacing:0.04em;
+  padding:4px 10px;background:transparent;border:1px solid var(--border2);
+  border-radius:4px;color:var(--text-mid);font-size:10px;cursor:pointer;
+  font-family:inherit;transition:background .1s,color .1s,border-color .1s;
 }
-.bb-btn:hover{background:#222;color:var(--text)}
-.bb-btn.active{
-  background:var(--accent-bg);
-  border-color:var(--accent-dim);
-  color:var(--accent);
-}
+.bb-btn:hover{background:#1e1e1e;color:var(--text)}
+.bb-btn.active{background:var(--accent-bg);border-color:var(--accent-dim);color:var(--accent)}
 
 /* Spinner */
 #spinner{
-  position:absolute;
-  inset:0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  background:rgba(12,12,12,.6);
-  backdrop-filter:blur(4px);
-  -webkit-backdrop-filter:blur(4px);
-  font-size:12px;
-  color:var(--text-dim);
-  letter-spacing:0.08em;
-  flex-direction:column;
-  gap:12px;
-  z-index:10;
+  position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+  background:rgba(9,9,9,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  flex-direction:column;gap:11px;z-index:10;
 }
-.spin{
-  width:20px;height:20px;
-  border:2px solid #2a2a2a;
-  border-top-color:var(--accent);
-  border-radius:50%;
-  animation:spin .7s linear infinite;
-}
+.spin{width:18px;height:18px;border:2px solid #262626;border-top-color:var(--accent);border-radius:50%;animation:spin .65s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+#spin-label{font-size:10px;color:var(--text-dim);letter-spacing:.1em}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════ SIDEBAR ══════════════════ -->
 <aside id="sidebar">
-  <div class="s-header">
+  <div class="s-head">
     <div class="app-name">Frame</div>
-    <div class="app-sub">Cinematic Photo Editor</div>
+    <div class="app-sub">Photo Editor</div>
   </div>
 
   <div class="s-scroll">
 
-    <!-- Load -->
-    <div class="s-load">
+    <div class="s-open">
       <button class="btn-file" id="btn-open">Open Photo…</button>
       <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" style="display:none">
     </div>
 
-    <!-- ── Film Grain ── -->
-    <div class="fx-section">
+    <!-- ══ LIGHT ══ -->
+    <div class="fx-sec">
+      <div class="light-head">
+        <span class="light-title">Light</span>
+      </div>
+      <div class="light-body">
+
+        <div class="sub-label">White Balance</div>
+        <div class="row">
+          <span class="row-label">Temp</span>
+          <input type="range" class="center-slider" id="l-temp" min="-100" max="100" value="0">
+          <span class="row-val" id="l-temp-v">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Tint</span>
+          <input type="range" class="center-slider" id="l-tint" min="-100" max="100" value="0">
+          <span class="row-val" id="l-tint-v">0</span>
+        </div>
+
+        <div class="divider"></div>
+        <div class="sub-label">Tone</div>
+        <div class="row">
+          <span class="row-label">Exposure</span>
+          <input type="range" class="center-slider" id="l-exp" min="-100" max="100" value="0">
+          <span class="row-val" id="l-exp-v">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Contrast</span>
+          <input type="range" class="center-slider" id="l-con" min="-100" max="100" value="0">
+          <span class="row-val" id="l-con-v">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Highlights</span>
+          <input type="range" class="center-slider" id="l-hi" min="-100" max="100" value="0">
+          <span class="row-val" id="l-hi-v">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Shadows</span>
+          <input type="range" class="center-slider" id="l-sh" min="-100" max="100" value="0">
+          <span class="row-val" id="l-sh-v">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Whites</span>
+          <input type="range" class="center-slider" id="l-wh" min="-100" max="100" value="0">
+          <span class="row-val" id="l-wh-v">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Blacks</span>
+          <input type="range" class="center-slider" id="l-bl" min="-100" max="100" value="0">
+          <span class="row-val" id="l-bl-v">0</span>
+        </div>
+
+        <div class="divider"></div>
+        <div class="sub-label">Presence</div>
+        <div class="row">
+          <span class="row-label">Vibrance</span>
+          <input type="range" class="center-slider" id="l-vib" min="-100" max="100" value="0">
+          <span class="row-val" id="l-vib-v">0</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Saturation</span>
+          <input type="range" class="center-slider" id="l-sat" min="-100" max="100" value="0">
+          <span class="row-val" id="l-sat-v">0</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ FILM GRAIN ══ -->
+    <div class="fx-sec">
       <div class="fx-head" data-fx="grain">
         <label class="tog" onclick="event.stopPropagation()">
           <input type="checkbox" id="grain-on">
@@ -448,7 +310,7 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
         </label>
         <span class="fx-name">Film Grain</span>
         <span class="fx-tag">Grain</span>
-        <svg class="fx-chevron" id="chev-grain" viewBox="0 0 10 10" fill="none">
+        <svg class="chev" id="chev-grain" viewBox="0 0 10 10" fill="none">
           <path d="M2 3.5L5 6.5L8 3.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
         </svg>
       </div>
@@ -458,6 +320,11 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
           <input type="range" id="grain-amt" min="0" max="100" value="40">
           <span class="row-val" id="grain-amt-v">40</span>
         </div>
+        <div class="row">
+          <span class="row-label">Size</span>
+          <input type="range" id="grain-size" min="0" max="100" value="30">
+          <span class="row-val" id="grain-size-v">30</span>
+        </div>
         <div class="radio-group">
           <button class="radio-opt active" data-grain="fine">Fine</button>
           <button class="radio-opt" data-grain="coarse">Coarse</button>
@@ -465,36 +332,8 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
       </div>
     </div>
 
-    <!-- ── Distortion ── -->
-    <div class="fx-section">
-      <div class="fx-head" data-fx="dist">
-        <label class="tog" onclick="event.stopPropagation()">
-          <input type="checkbox" id="dist-on">
-          <div class="tog-track"></div>
-          <div class="tog-thumb"></div>
-        </label>
-        <span class="fx-name">Distortion</span>
-        <span class="fx-tag">Lens</span>
-        <svg class="fx-chevron" id="chev-dist" viewBox="0 0 10 10" fill="none">
-          <path d="M2 3.5L5 6.5L8 3.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="fx-body" id="body-dist">
-        <select class="fx-select" id="dist-type">
-          <option value="barrel">Barrel</option>
-          <option value="wave">Wave</option>
-          <option value="fisheye">Fisheye</option>
-        </select>
-        <div class="row">
-          <span class="row-label">Intensity</span>
-          <input type="range" id="dist-amt" min="0" max="100" value="30">
-          <span class="row-val" id="dist-amt-v">30</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Glitch ── -->
-    <div class="fx-section">
+    <!-- ══ GLITCH ══ -->
+    <div class="fx-sec">
       <div class="fx-head" data-fx="glitch">
         <label class="tog" onclick="event.stopPropagation()">
           <input type="checkbox" id="glitch-on">
@@ -503,7 +342,7 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
         </label>
         <span class="fx-name">Glitch</span>
         <span class="fx-tag">Digital</span>
-        <svg class="fx-chevron" id="chev-glitch" viewBox="0 0 10 10" fill="none">
+        <svg class="chev" id="chev-glitch" viewBox="0 0 10 10" fill="none">
           <path d="M2 3.5L5 6.5L8 3.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
         </svg>
       </div>
@@ -526,109 +365,16 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
       </div>
     </div>
 
-    <!-- ── Kodak Portra 400 ── -->
-    <div class="fx-section">
-      <div class="fx-head" data-fx="portra">
-        <label class="tog" onclick="event.stopPropagation()">
-          <input type="checkbox" id="portra-on">
-          <div class="tog-track"></div>
-          <div class="tog-thumb"></div>
-        </label>
-        <span class="fx-name">Kodak Portra 400</span>
-        <span class="fx-tag">Film</span>
-        <svg class="fx-chevron" id="chev-portra" viewBox="0 0 10 10" fill="none">
-          <path d="M2 3.5L5 6.5L8 3.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="fx-body" id="body-portra">
-        <div class="row">
-          <span class="row-label">Intensity</span>
-          <input type="range" id="portra-amt" min="0" max="100" value="80">
-          <span class="row-val" id="portra-amt-v">80</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Kodak Gold 200 ── -->
-    <div class="fx-section">
-      <div class="fx-head" data-fx="gold">
-        <label class="tog" onclick="event.stopPropagation()">
-          <input type="checkbox" id="gold-on">
-          <div class="tog-track"></div>
-          <div class="tog-thumb"></div>
-        </label>
-        <span class="fx-name">Kodak Gold 200</span>
-        <span class="fx-tag">Film</span>
-        <svg class="fx-chevron" id="chev-gold" viewBox="0 0 10 10" fill="none">
-          <path d="M2 3.5L5 6.5L8 3.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="fx-body" id="body-gold">
-        <div class="row">
-          <span class="row-label">Intensity</span>
-          <input type="range" id="gold-amt" min="0" max="100" value="80">
-          <span class="row-val" id="gold-amt-v">80</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Fuji Superia ── -->
-    <div class="fx-section">
-      <div class="fx-head" data-fx="fuji">
-        <label class="tog" onclick="event.stopPropagation()">
-          <input type="checkbox" id="fuji-on">
-          <div class="tog-track"></div>
-          <div class="tog-thumb"></div>
-        </label>
-        <span class="fx-name">Fuji Superia</span>
-        <span class="fx-tag">Film</span>
-        <svg class="fx-chevron" id="chev-fuji" viewBox="0 0 10 10" fill="none">
-          <path d="M2 3.5L5 6.5L8 3.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="fx-body" id="body-fuji">
-        <div class="row">
-          <span class="row-label">Intensity</span>
-          <input type="range" id="fuji-amt" min="0" max="100" value="80">
-          <span class="row-val" id="fuji-amt-v">80</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Cross Process ── -->
-    <div class="fx-section">
-      <div class="fx-head" data-fx="cross">
-        <label class="tog" onclick="event.stopPropagation()">
-          <input type="checkbox" id="cross-on">
-          <div class="tog-track"></div>
-          <div class="tog-thumb"></div>
-        </label>
-        <span class="fx-name">Cross Process</span>
-        <span class="fx-tag">Film</span>
-        <svg class="fx-chevron" id="chev-cross" viewBox="0 0 10 10" fill="none">
-          <path d="M2 3.5L5 6.5L8 3.5" stroke="#666" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="fx-body" id="body-cross">
-        <div class="row">
-          <span class="row-label">Intensity</span>
-          <input type="range" id="cross-amt" min="0" max="100" value="80">
-          <span class="row-val" id="cross-amt-v">80</span>
-        </div>
-      </div>
-    </div>
-
   </div><!-- /s-scroll -->
 
-  <!-- Actions -->
   <div class="s-actions">
     <div class="btn-row">
-      <button class="btn btn-ghost" id="btn-reset">Reset All</button>
-      <button class="btn btn-ghost" id="btn-ba" style="flex:1.5">Before / After</button>
+      <button class="btn btn-ghost" id="btn-reset">Reset</button>
+      <button class="btn btn-ghost" id="btn-ba" style="flex:1.4">Before / After</button>
     </div>
     <div class="export-row">
       <button class="btn btn-primary" id="btn-jpg">Save JPG</button>
-      <select class="q-select" id="jpg-q">
+      <select class="q-sel" id="jpg-q">
         <option value="1.0">100%</option>
         <option value="0.8" selected>80%</option>
         <option value="0.6">60%</option>
@@ -638,21 +384,21 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
   </div>
 </aside>
 
-<!-- ══════════════════ CANVAS ══════════════════ -->
+<!-- ══════════════ CANVAS ══════════════ -->
 <main id="canvas-area">
   <div id="dropzone">
     <div class="drop-ring">
       <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <rect x="4" y="7" width="28" height="22" rx="3.5" stroke="#aaa" stroke-width="1.5"/>
-        <circle cx="13" cy="15" r="3" stroke="#aaa" stroke-width="1.5"/>
-        <path d="M4 25 L11.5 18 L18 22.5 L23.5 17 L32 25" stroke="#aaa" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-        <path d="M24 4 L24 12 M20.5 8 L24 4 L27.5 8" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="4" y="7" width="28" height="22" rx="3.5" stroke="#bbb" stroke-width="1.5"/>
+        <circle cx="13" cy="15" r="3" stroke="#bbb" stroke-width="1.5"/>
+        <path d="M4 25L11.5 18L18 22.5L23.5 17L32 25" stroke="#bbb" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M25 3.5V11M21.5 7.5L25 3.5L28.5 7.5" stroke="#bbb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
     <div class="drop-text">
       <strong>Drop a photo here</strong>
       Drag from Photos.app or Finder<br>
-      <span style="color:#2e2e2e;font-size:11px">JPG &nbsp;·&nbsp; PNG &nbsp;·&nbsp; WEBP</span>
+      <span style="color:#2a2a2a;font-size:11px">JPG · PNG · WEBP</span>
     </div>
   </div>
 
@@ -660,7 +406,7 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
 
   <div id="spinner">
     <div class="spin"></div>
-    <span style="letter-spacing:.08em;font-size:11px">PROCESSING</span>
+    <span id="spin-label">PROCESSING</span>
   </div>
 
   <div id="bottom-bar">
@@ -672,315 +418,368 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
 <script>
 'use strict';
 
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // STATE
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 const S = {
-  src: null,       // Uint8ClampedArray original pixels
-  W: 0, H: 0,
+  src: null, W: 0, H: 0,
   showOrig: false,
   grainSeed: 1,
 
-  grain:   { on:false, amt:40, type:'fine' },
-  dist:    { on:false, amt:30, type:'barrel' },
-  glitch:  { on:false, amt:50, scan:30, chroma:60 },
-  portra:  { on:false, amt:80 },
-  gold:    { on:false, amt:80 },
-  fuji:    { on:false, amt:80 },
-  cross:   { on:false, amt:80 },
+  light: { temp:0, tint:0, exp:0, con:0, hi:0, sh:0, wh:0, bl:0, vib:0, sat:0 },
+  grain: { on:false, amt:40, size:30, type:'fine' },
+  glitch:{ on:false, amt:50, scan:30, chroma:60 },
 };
 
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // DOM
-// ─────────────────────────────────────────────────────
-const $canvas    = document.getElementById('canvas');
-const $ctx       = $canvas.getContext('2d', { willReadFrequently: true });
-const $area      = document.getElementById('canvas-area');
-const $drop      = document.getElementById('dropzone');
-const $bar       = document.getElementById('bottom-bar');
-const $info      = document.getElementById('img-info');
-const $spinner   = document.getElementById('spinner');
-const $bbBA      = document.getElementById('bb-ba');
-const $btnBA     = document.getElementById('btn-ba');
+// ─────────────────────────────────────────────────────────────
+const $canvas = document.getElementById('canvas');
+const $ctx    = $canvas.getContext('2d', { willReadFrequently: true });
+const $area   = document.getElementById('canvas-area');
+const $drop   = document.getElementById('dropzone');
+const $bar    = document.getElementById('bottom-bar');
+const $info   = document.getElementById('img-info');
+const $spin   = document.getElementById('spinner');
+const $bbBA   = document.getElementById('bb-ba');
+const $btnBA  = document.getElementById('btn-ba');
 
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // UTILS
-// ─────────────────────────────────────────────────────
-const clamp  = v => v < 0 ? 0 : v > 255 ? 255 : v | 0;
-const lerp   = (a,b,t) => a + (b-a)*t;
+// ─────────────────────────────────────────────────────────────
+const clamp = v => v < 0 ? 0 : v > 255 ? 255 : v | 0;
+const lerp  = (a, b, t) => a + (b - a) * t;
 
-function mulberry32(s){
-  return function(){
+function mulberry32(s) {
+  return () => {
     s |= 0; s = s + 0x6D2B79F5 | 0;
-    let t = Math.imul(s ^ s>>>15, 1|s);
-    t = t + Math.imul(t ^ t>>>7, 61|t) ^ t;
-    return ((t ^ t>>>14) >>> 0) / 4294967296;
+    let t = Math.imul(s ^ s >>> 15, 1 | s);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
   };
 }
 
-function makeLUT(fn){
+function makeLUT(fn) {
   const t = new Uint8ClampedArray(256);
-  for(let i=0;i<256;i++) t[i] = Math.max(0,Math.min(255,Math.round(fn(i))));
+  for (let i = 0; i < 256; i++) t[i] = Math.max(0, Math.min(255, Math.round(fn(i))));
   return t;
 }
 
-function applyLUTs(d, r, g, b){
-  for(let i=0; i<d.length; i+=4){
-    d[i]   = r[d[i]];
-    d[i+1] = g[d[i+1]];
-    d[i+2] = b[d[i+2]];
-  }
+function bilerp(src, W, H, x, y, ch) {
+  x = x < 0 ? 0 : x > W - 1.001 ? W - 1.001 : x;
+  y = y < 0 ? 0 : y > H - 1.001 ? H - 1.001 : y;
+  const x0 = x | 0, y0 = y | 0, x1 = x0 + 1, y1 = y0 + 1;
+  const fx = x - x0, fy = y - y0;
+  return src[(y0 * W + x0) * 4 + ch] * (1 - fx) * (1 - fy)
+       + src[(y0 * W + x1) * 4 + ch] * fx * (1 - fy)
+       + src[(y1 * W + x0) * 4 + ch] * (1 - fx) * fy
+       + src[(y1 * W + x1) * 4 + ch] * fx * fy;
 }
 
-function bilerp(src, W, H, x, y, ch){
-  x = x < 0 ? 0 : x > W-1.001 ? W-1.001 : x;
-  y = y < 0 ? 0 : y > H-1.001 ? H-1.001 : y;
-  const x0=x|0, y0=y|0, x1=x0+1, y1=y0+1;
-  const fx=x-x0, fy=y-y0;
-  const i00=(y0*W+x0)*4+ch, i10=(y0*W+x1)*4+ch;
-  const i01=(y1*W+x0)*4+ch, i11=(y1*W+x1)*4+ch;
-  return src[i00]*(1-fx)*(1-fy) + src[i10]*fx*(1-fy)
-       + src[i01]*(1-fx)*fy     + src[i11]*fx*fy;
+// ─────────────────────────────────────────────────────────────
+// SLIDER VISUALS
+// ─────────────────────────────────────────────────────────────
+const TRACK_BASE  = '#1c1c1c';
+const TRACK_FILL  = 'var(--accent-dim)';
+
+function setCenterTrack(el, val) {
+  const pct = (val + 100) / 2; // map -100..+100 → 0..100%
+  const c   = 50;
+  const lo  = Math.min(pct, c), hi = Math.max(pct, c);
+  el.style.background =
+    `linear-gradient(to right, ${TRACK_BASE} ${lo}%, ${TRACK_FILL} ${lo}%, ${TRACK_FILL} ${hi}%, ${TRACK_BASE} ${hi}%)`;
 }
 
-// ─────────────────────────────────────────────────────
+function setNormalTrack(el, val) {
+  el.style.background =
+    `linear-gradient(to right, ${TRACK_FILL} ${val}%, ${TRACK_BASE} ${val}%)`;
+}
+
+function fmtCenter(v) { return v > 0 ? '+' + v : '' + v; }
+
+// ─────────────────────────────────────────────────────────────
 // IMAGE LOADING
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 const MAX_DIM = 2400;
 
-function loadFile(f){
-  if(!f || !f.type.startsWith('image/')) return;
+function loadFile(f) {
+  if (!f || !f.type.startsWith('image/')) return;
   const url = URL.createObjectURL(f);
   const img = new Image();
-  img.onload = () => { URL.revokeObjectURL(url); loadImg(img); };
+  img.onload  = () => { URL.revokeObjectURL(url); loadImg(img); };
   img.onerror = () => { URL.revokeObjectURL(url); alert('Could not load image.'); };
   img.src = url;
 }
 
-function loadImg(img){
+function loadImg(img) {
   let W = img.naturalWidth, H = img.naturalHeight;
-  const longest = Math.max(W,H);
-  if(longest > MAX_DIM){ const s=MAX_DIM/longest; W=Math.round(W*s); H=Math.round(H*s); }
-
-  $canvas.width  = W;
-  $canvas.height = H;
+  const L = Math.max(W, H);
+  if (L > MAX_DIM) { const s = MAX_DIM / L; W = Math.round(W * s); H = Math.round(H * s); }
+  $canvas.width = W; $canvas.height = H;
   $ctx.drawImage(img, 0, 0, W, H);
-
-  S.src = new Uint8ClampedArray($ctx.getImageData(0,0,W,H).data);
-  S.W = W; S.H = H;
-  S.showOrig = false;
-  $btnBA.classList.remove('active');
-  $bbBA.classList.remove('active');
-
-  $drop.style.display     = 'none';
-  $canvas.style.display   = 'block';
-  $bar.style.display      = 'flex';
-  $info.textContent       = `${img.naturalWidth} × ${img.naturalHeight}`;
-
+  S.src = new Uint8ClampedArray($ctx.getImageData(0, 0, W, H).data);
+  S.W = W; S.H = H; S.showOrig = false;
+  syncBA(false);
+  $drop.style.display   = 'none';
+  $canvas.style.display = 'block';
+  $bar.style.display    = 'flex';
+  $info.textContent     = `${img.naturalWidth} × ${img.naturalHeight}`;
   render();
 }
 
-// ─────────────────────────────────────────────────────
-// RENDER PIPELINE
-// ─────────────────────────────────────────────────────
-let _timer = null;
-
-function scheduleRender(){
-  if(!S.src) return;
-  if(_timer) clearTimeout(_timer);
-  _timer = setTimeout(render, 75);
+// ─────────────────────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────────────────────
+let _rtimer = null;
+function scheduleRender() {
+  if (!S.src) return;
+  if (_rtimer) clearTimeout(_rtimer);
+  _rtimer = setTimeout(render, 70);
 }
 
-function render(){
-  _timer = null;
-  if(!S.src) return;
-
-  if(S.showOrig){
+function render() {
+  _rtimer = null;
+  if (!S.src) return;
+  if (S.showOrig) {
     $ctx.putImageData(new ImageData(new Uint8ClampedArray(S.src), S.W, S.H), 0, 0);
     return;
   }
-
-  $spinner.style.display = 'flex';
-
-  // Use rAF so spinner actually paints before blocking compute
+  $spin.style.display = 'flex';
   requestAnimationFrame(() => {
-    const W=S.W, H=S.H;
+    const W = S.W, H = S.H;
     let px = new Uint8ClampedArray(S.src);
 
-    // 1. Distortion (geometric — returns new buffer)
-    if(S.dist.on)  px = fxDist(px, W, H, S.dist.amt/100, S.dist.type);
+    // 1. Light adjustments
+    fxLight(px, W, H, S.light);
 
-    // 2. Film looks (in-place color grade)
-    if(S.portra.on) fxPortra(px, W, H, S.portra.amt/100);
-    if(S.gold.on)   fxGold(px, W, H, S.gold.amt/100);
-    if(S.fuji.on)   fxFuji(px, W, H, S.fuji.amt/100);
-    if(S.cross.on)  fxCross(px, W, H, S.cross.amt/100);
-
-    // 3. Grain (in-place, new seed each render for natural animation)
-    if(S.grain.on){
+    // 2. Film grain
+    if (S.grain.on) {
       S.grainSeed = (S.grainSeed * 1664525 + 1013904223) & 0x7FFFFFFF;
-      fxGrain(px, W, H, S.grain.amt/100, S.grain.type, S.grainSeed);
+      fxGrain(px, W, H, S.grain.amt / 100, S.grain.size / 100, S.grain.type, S.grainSeed);
     }
 
-    // 4. Glitch (returns new buffer)
-    if(S.glitch.on) px = fxGlitch(px, W, H, S.glitch.amt/100, S.glitch.scan/100, S.glitch.chroma/100);
+    // 3. Glitch
+    if (S.glitch.on) px = fxGlitch(px, W, H, S.glitch.amt / 100, S.glitch.scan / 100, S.glitch.chroma / 100);
 
     $ctx.putImageData(new ImageData(px, W, H), 0, 0);
-    $spinner.style.display = 'none';
+    $spin.style.display = 'none';
   });
 }
 
-// ─────────────────────────────────────────────────────
-// EFFECTS
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// EFFECT: LIGHT
+// ─────────────────────────────────────────────────────────────
+function fxLight(d, W, H, p) {
+  const { temp, tint, exp, con, hi, sh, wh, bl, vib, sat } = p;
 
-// ── Distortion ──
-function fxDist(src, W, H, t, type){
-  const dst = new Uint8ClampedArray(src.length);
-  const cx=W/2, cy=H/2;
+  // Check if anything is non-zero to skip the pass entirely
+  if (!temp && !tint && !exp && !con && !hi && !sh && !wh && !bl && !vib && !sat) return;
 
-  for(let y=0; y<H; y++){
-    for(let x=0; x<W; x++){
-      let sx, sy;
-      if(type==='barrel'){
-        const nx=(x-cx)/cx, ny=(y-cy)/cy;
-        const r2=nx*nx+ny*ny;
-        const f=1+t*0.6*r2;
-        sx=nx*f*cx+cx; sy=ny*f*cy+cy;
-      } else if(type==='fisheye'){
-        const nx=(x-cx)/cx, ny=(y-cy)/cy;
-        const r=Math.sqrt(nx*nx+ny*ny);
-        const r2=r*r;
-        const f=1+t*1.4*r2+t*0.6*r2*r2;
-        sx=nx*f*cx+cx; sy=ny*f*cy+cy;
-      } else { // wave
-        const amp=t*28;
-        const freq=0.018*Math.PI*2;
-        sx=x+Math.sin(y*freq)*amp;
-        sy=y+Math.sin(x*freq)*amp*0.55;
-      }
+  // Exposure + Contrast LUT (channel-independent → one LUT for all channels)
+  const expFactor  = Math.pow(2, exp * 3.5 / 100);
+  const conFactor  = 1 + con * 0.8 / 100;
 
-      const di=(y*W+x)*4;
-      if(sx>=0&&sx<W-1&&sy>=0&&sy<H-1){
-        dst[di]   = bilerp(src,W,H,sx,sy,0)|0;
-        dst[di+1] = bilerp(src,W,H,sx,sy,1)|0;
-        dst[di+2] = bilerp(src,W,H,sx,sy,2)|0;
-        dst[di+3] = 255;
-      } else {
-        // edge: replicate nearest
-        const cx2=Math.max(0,Math.min(W-1,Math.round(sx)));
-        const cy2=Math.max(0,Math.min(H-1,Math.round(sy)));
-        const si=(cy2*W+cx2)*4;
-        dst[di]=src[si]; dst[di+1]=src[si+1]; dst[di+2]=src[si+2]; dst[di+3]=255;
-      }
+  const ecLUT = makeLUT(v => {
+    let x = v * expFactor;                          // exposure
+    x = ((x / 255 - 0.5) * conFactor + 0.5) * 255; // contrast S-curve
+    return x;
+  });
+
+  // Pre-scale floats once
+  const hiF  = hi  * 0.72 / 100;
+  const shF  = sh  * 0.60 / 100;
+  const whF  = wh  * 0.80 / 100;
+  const blF  = bl  * 0.50 / 100;
+  const tF   = temp * 0.01;
+  const tiF  = tint * 0.01;
+  const vibF = vib * 0.008;
+  const satF = sat / 100;
+
+  for (let i = 0; i < d.length; i += 4) {
+    let r = ecLUT[d[i]], g = ecLUT[d[i + 1]], b = ecLUT[d[i + 2]];
+
+    // Luminance after exposure/contrast, used for zone weights
+    const lum = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+
+    // Highlights: smooth above 0.5, peaks at 1.0
+    if (hi !== 0) {
+      const hw  = lum > 0.5 ? (lum - 0.5) * 2 : 0;
+      const adj = hiF * 255 * hw * hw;
+      r = clamp(r + adj); g = clamp(g + adj); b = clamp(b + adj);
     }
+
+    // Shadows: smooth below 0.5, peaks at 0.0
+    if (sh !== 0) {
+      const sw  = lum < 0.5 ? (0.5 - lum) * 2 : 0;
+      const adj = shF * 255 * sw * sw;
+      r = clamp(r + adj); g = clamp(g + adj); b = clamp(b + adj);
+    }
+
+    // Whites: only very bright (above 0.75)
+    if (wh !== 0) {
+      const ww  = lum > 0.75 ? (lum - 0.75) * 4 : 0;
+      const adj = whF * 255 * ww;
+      r = clamp(r + adj); g = clamp(g + adj); b = clamp(b + adj);
+    }
+
+    // Blacks: only very dark (below 0.25)
+    if (bl !== 0) {
+      const bkw = lum < 0.25 ? (0.25 - lum) * 4 : 0;
+      const adj = blF * 255 * bkw;
+      r = clamp(r + adj); g = clamp(g + adj); b = clamp(b + adj);
+    }
+
+    // Temperature (warm +, cool -)
+    if (temp !== 0) {
+      r = clamp(r + tF * 30);
+      g = clamp(g + tF * 7);
+      b = clamp(b - tF * 36);
+    }
+
+    // Tint (magenta +, green -)
+    if (tint !== 0) {
+      g = clamp(g - tiF * 26);
+      r = clamp(r + (tiF > 0 ? tiF * 7 : 0));
+      b = clamp(b + (tiF > 0 ? tiF * 7 : 0));
+    }
+
+    // Vibrance – boosts low-saturation pixels more
+    if (vib !== 0) {
+      const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+      const currentSat = mx === 0 ? 0 : (mx - mn) / mx;
+      const boost = 1 + vibF * (1 - currentSat) * 5;
+      const lv = r * 0.299 + g * 0.587 + b * 0.114;
+      r = clamp(lv + (r - lv) * boost);
+      g = clamp(lv + (g - lv) * boost);
+      b = clamp(lv + (b - lv) * boost);
+    }
+
+    // Saturation
+    if (sat !== 0) {
+      const ls = r * 0.299 + g * 0.587 + b * 0.114;
+      const sm = 1 + satF;
+      r = clamp(ls + (r - ls) * sm);
+      g = clamp(ls + (g - ls) * sm);
+      b = clamp(ls + (b - ls) * sm);
+    }
+
+    d[i] = r; d[i + 1] = g; d[i + 2] = b;
   }
-  return dst;
 }
 
-// ── Film Grain ──
-function fxGrain(d, W, H, t, type, seed){
-  const rng = mulberry32(seed);
-  const block = type==='coarse' ? 4 : 1;
-  const nW = Math.ceil(W/block), nH = Math.ceil(H/block);
-  const maxN = 52*t;
-  const noise = new Float32Array(nW*nH);
-  for(let i=0; i<noise.length; i++) noise[i]=(rng()*2-1)*maxN;
+// ─────────────────────────────────────────────────────────────
+// EFFECT: FILM GRAIN
+// ─────────────────────────────────────────────────────────────
+function fxGrain(d, W, H, amt, sizeT, type, seed) {
+  const rng      = mulberry32(seed);
+  const baseBlock = type === 'coarse' ? 4 : 1;
+  // Size slider blends block from 1→8
+  const block    = Math.max(1, Math.round(baseBlock + sizeT * 7));
+  const nW       = Math.ceil(W / block), nH = Math.ceil(H / block);
+  const maxN     = 56 * amt;
 
-  for(let y=0; y<H; y++){
-    for(let x=0; x<W; x++){
-      const ni = (Math.floor(y/block)*nW + Math.floor(x/block));
-      const n = noise[ni];
-      const idx=(y*W+x)*4;
-      const lum = d[idx]*0.299 + d[idx+1]*0.587 + d[idx+2]*0.114;
-      const f = 0.3 + 0.7*(1 - Math.abs(lum-128)/160); // more in midtones
-      const g = n*f;
-      d[idx]   = clamp(d[idx]+g);
-      d[idx+1] = clamp(d[idx+1]+g);
-      d[idx+2] = clamp(d[idx+2]+g);
+  const noise = new Float32Array(nW * nH);
+  for (let i = 0; i < noise.length; i++) noise[i] = (rng() * 2 - 1) * maxN;
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const ni  = Math.floor(y / block) * nW + Math.floor(x / block);
+      const n   = noise[ni];
+      const idx = (y * W + x) * 4;
+      const lum = d[idx] * 0.299 + d[idx + 1] * 0.587 + d[idx + 2] * 0.114;
+      // Midtone-weighted – less grain in pure blacks/whites (realistic halide grain)
+      const f   = 0.25 + 0.75 * (1 - Math.abs(lum - 128) / 155);
+      const g   = n * f;
+      d[idx]     = clamp(d[idx]     + g);
+      d[idx + 1] = clamp(d[idx + 1] + g);
+      d[idx + 2] = clamp(d[idx + 2] + g);
     }
   }
 }
 
-// ── Glitch ──
-function fxGlitch(src, W, H, t, scanT, chromaT){
+// ─────────────────────────────────────────────────────────────
+// EFFECT: GLITCH
+// ─────────────────────────────────────────────────────────────
+function fxGlitch(src, W, H, amt, scanT, chromaT) {
   const dst = new Uint8ClampedArray(src);
-  const rng = mulberry32((Date.now()*t*1000)|0);
+  const rng = mulberry32((Date.now() * 137) | 0);
 
-  // Chromatic aberration
-  const shift = Math.round(chromaT * t * 28);
-  if(shift > 0){
-    for(let y=0; y<H; y++){
-      for(let x=0; x<W; x++){
-        const di=(y*W+x)*4;
-        const rx=Math.min(W-1, x+shift);
-        const bx=Math.max(0,    x-shift);
-        dst[di]   = src[(y*W+rx)*4];
-        dst[di+2] = src[(y*W+bx)*4+2];
+  // Chromatic aberration – R shifts right, B shifts left
+  const shift = Math.round(chromaT * amt * 30);
+  if (shift > 0) {
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const di = (y * W + x) * 4;
+        const rx = Math.min(W - 1, x + shift);
+        const bx = Math.max(0, x - shift);
+        dst[di]     = src[(y * W + rx) * 4];
+        dst[di + 2] = src[(y * W + bx) * 4 + 2];
       }
     }
   }
 
-  // Slice displacement
-  const slices = Math.ceil(t*14);
-  for(let i=0; i<slices; i++){
-    if(rng()>t*0.95) continue;
-    const y0   = Math.floor(rng()*H);
-    const hh   = Math.floor(rng()*22+2);
-    const sX   = Math.round((rng()*2-1)*t*90);
-    for(let dy=0; dy<hh; dy++){
-      const row=y0+dy; if(row>=H) break;
-      for(let x=0; x<W; x++){
-        const srcX=((x-sX)%W+W)%W;
-        const di=(row*W+x)*4, si=(row*W+srcX)*4;
-        dst[di]=src[si]; dst[di+1]=src[si+1]; dst[di+2]=src[si+2]; dst[di+3]=255;
+  // Horizontal slice displacement
+  const slices = Math.ceil(amt * 15);
+  for (let i = 0; i < slices; i++) {
+    if (rng() > amt * 0.92) continue;
+    const y0 = Math.floor(rng() * H);
+    const hh = Math.floor(rng() * 24 + 2);
+    const sX = Math.round((rng() * 2 - 1) * amt * 100);
+    for (let dy = 0; dy < hh; dy++) {
+      const row = y0 + dy; if (row >= H) break;
+      for (let x = 0; x < W; x++) {
+        const srcX = ((x - sX) % W + W) % W;
+        const di   = (row * W + x) * 4;
+        const si   = (row * W + srcX) * 4;
+        dst[di] = src[si]; dst[di + 1] = src[si + 1]; dst[di + 2] = src[si + 2]; dst[di + 3] = 255;
       }
     }
   }
 
   // Block corruption
-  const blocks=Math.ceil(t*6);
-  for(let i=0; i<blocks; i++){
-    if(rng()>t*0.9) continue;
-    const bx=Math.floor(rng()*W), by=Math.floor(rng()*H);
-    const bw=Math.floor(rng()*90+10), bh=Math.floor(rng()*30+4);
-    if(rng()<0.45){
-      // Solid color block
-      const cr=rng()*200|0, cg=rng()*200|0, cb=rng()*255|0;
-      for(let dy=0; dy<bh; dy++){
-        const row=by+dy; if(row>=H) break;
-        for(let dx=0; dx<bw; dx++){
-          const col=bx+dx; if(col>=W) break;
-          const di=(row*W+col)*4;
-          dst[di]=cr; dst[di+1]=cg; dst[di+2]=cb; dst[di+3]=255;
+  const blocks = Math.ceil(amt * 7);
+  for (let i = 0; i < blocks; i++) {
+    if (rng() > amt * 0.88) continue;
+    const bx = Math.floor(rng() * W), by = Math.floor(rng() * H);
+    const bw = Math.floor(rng() * 100 + 8), bh = Math.floor(rng() * 32 + 4);
+    if (rng() < 0.5) {
+      // Solid-color block (digital artifact)
+      const cr = rng() * 220 | 0, cg = rng() * 220 | 0, cb = rng() * 255 | 0;
+      for (let dy = 0; dy < bh; dy++) {
+        const row = by + dy; if (row >= H) break;
+        for (let dx = 0; dx < bw; dx++) {
+          const col = bx + dx; if (col >= W) break;
+          const di  = (row * W + col) * 4;
+          dst[di] = cr; dst[di + 1] = cg; dst[di + 2] = cb; dst[di + 3] = 255;
         }
       }
     } else {
-      // Row shift within block
-      const sy2=Math.round((rng()-0.5)*16);
-      for(let dy=0; dy<bh; dy++){
-        const row=by+dy; if(row>=H) break;
-        const srcRow=Math.max(0,Math.min(H-1,row+sy2));
-        for(let dx=0; dx<bw; dx++){
-          const col=bx+dx; if(col>=W) break;
-          const di=(row*W+col)*4, si=(srcRow*W+col)*4;
-          dst[di]=src[si]; dst[di+1]=src[si+1]; dst[di+2]=src[si+2];
+      // Row-shifted copy block
+      const sy2 = Math.round((rng() - 0.5) * 20);
+      for (let dy = 0; dy < bh; dy++) {
+        const row = by + dy; if (row >= H) break;
+        const srcRow = Math.max(0, Math.min(H - 1, row + sy2));
+        for (let dx = 0; dx < bw; dx++) {
+          const col = bx + dx; if (col >= W) break;
+          const di  = (row * W + col) * 4;
+          const si  = (srcRow * W + col) * 4;
+          dst[di] = src[si]; dst[di + 1] = src[si + 1]; dst[di + 2] = src[si + 2];
         }
       }
     }
   }
 
   // Scanlines
-  if(scanT>0){
-    const spacing=Math.max(2,Math.round(lerp(9,2,scanT)));
-    const dark=scanT*0.72;
-    for(let y=0; y<H; y++){
-      if(y%spacing===0){
-        for(let x=0; x<W; x++){
-          const di=(y*W+x)*4;
-          dst[di]   = clamp(dst[di]  *(1-dark));
-          dst[di+1] = clamp(dst[di+1]*(1-dark));
-          dst[di+2] = clamp(dst[di+2]*(1-dark));
+  if (scanT > 0) {
+    const sp   = Math.max(2, Math.round(lerp(10, 2, scanT)));
+    const dark = scanT * 0.75;
+    for (let y = 0; y < H; y++) {
+      if (y % sp === 0) {
+        for (let x = 0; x < W; x++) {
+          const di = (y * W + x) * 4;
+          dst[di]     = clamp(dst[di]     * (1 - dark));
+          dst[di + 1] = clamp(dst[di + 1] * (1 - dark));
+          dst[di + 2] = clamp(dst[di + 2] * (1 - dark));
         }
       }
     }
@@ -989,266 +788,173 @@ function fxGlitch(src, W, H, t, scanT, chromaT){
   return dst;
 }
 
-// ── Kodak Portra 400 ──
-// Warm, lifted blacks, muted greens, creamy skin tones
-function fxPortra(d, W, H, t){
-  // Curves: lift shadows, warm highlight rolloff
-  const rLUT = makeLUT(v => lerp(v, Math.min(255, v*0.91+19 + (v>128?(v-128)*0.04:0)), t));
-  const gLUT = makeLUT(v => lerp(v, Math.min(255, v*0.90+15), t));
-  const bLUT = makeLUT(v => lerp(v, Math.min(255, v*0.86+11), t));
-
-  for(let i=0; i<d.length; i+=4){
-    let r=rLUT[d[i]], g=gLUT[d[i+1]], b=bLUT[d[i+2]];
-
-    // Warm shadow: orange tint in darks
-    const lum = r*0.299+g*0.587+b*0.114;
-    const sf  = Math.max(0,(1-lum/145))*t;
-    r = clamp(r+18*sf);
-    g = clamp(g+4*sf);
-    b = clamp(b-14*sf);
-
-    // Mute greens: desaturate green channel slightly
-    const gDesatF = 0.12*t;
-    const lum2 = r*0.299+g*0.587+b*0.114;
-    g = clamp(g*(1-gDesatF)+lum2*gDesatF);
-
-    d[i]=r; d[i+1]=g|0; d[i+2]=b;
-  }
-}
-
-// ── Kodak Gold 200 ──
-// Warm yellows, higher contrast, saturated reds, vintage summer
-function fxGold(d, W, H, t){
-  // S-curve per channel with warm cast
-  const rLUT = makeLUT(v => lerp(v, clamp(v<110?v*0.78+5:v*1.22-29), t));
-  const gLUT = makeLUT(v => lerp(v, clamp(v<90?v*0.82:v*1.08-7), t));
-  const bLUT = makeLUT(v => lerp(v, clamp(v*0.72), t));
-
-  applyLUTs(d, rLUT, gLUT, bLUT);
-
-  // Saturation punch
-  const satBoost = 1 + 0.35*t;
-  for(let i=0; i<d.length; i+=4){
-    const lum = d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114;
-    d[i]   = clamp(lum+(d[i]-lum)*satBoost);
-    d[i+1] = clamp(lum+(d[i+1]-lum)*satBoost);
-    d[i+2] = clamp(lum+(d[i+2]-lum)*satBoost);
-  }
-}
-
-// ── Fuji Superia ──
-// Cool teal shadows, green-leaning midtones, cinematic restraint
-function fxFuji(d, W, H, t){
-  const rLUT = makeLUT(v => lerp(v, clamp(v<95?v*0.85:v*0.98+2), t));
-  const gLUT = makeLUT(v => lerp(v, clamp(v<75?v:v<175?v*1.07-5:v*0.96+8), t));
-  const bLUT = makeLUT(v => lerp(v, clamp(v<90?v*1.14:v*0.95+5), t));
-
-  applyLUTs(d, rLUT, gLUT, bLUT);
-
-  // Slight desaturation (cinematic flatness)
-  const desat = 0.12*t;
-  for(let i=0; i<d.length; i+=4){
-    const lum = d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114;
-    d[i]   = clamp(d[i]*(1-desat)+lum*desat);
-    d[i+1] = clamp(d[i+1]*(1-desat)+lum*desat);
-    d[i+2] = clamp(d[i+2]*(1-desat)+lum*desat);
-  }
-}
-
-// ── Cross Process ──
-// E6 in C41 developer: split toning, extreme contrast, oversaturation
-function fxCross(d, W, H, t){
-  const rLUT = makeLUT(v => lerp(v, clamp(v<60?v*0.45:v*1.45-33), t));
-  const gLUT = makeLUT(v => lerp(v, clamp(v<75?v*1.35:v<170?v*0.88+35:v*1.08-1), t));
-  const bLUT = makeLUT(v => lerp(v, clamp(v<105?v*1.45:v*0.55+42), t));
-
-  applyLUTs(d, rLUT, gLUT, bLUT);
-
-  // Hard saturation boost
-  const satBoost = 1 + 0.65*t;
-  for(let i=0; i<d.length; i+=4){
-    const lum = d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114;
-    d[i]   = clamp(lum+(d[i]-lum)*satBoost);
-    d[i+1] = clamp(lum+(d[i+1]-lum)*satBoost);
-    d[i+2] = clamp(lum+(d[i+2]-lum)*satBoost);
-  }
-}
-
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // FILE EVENTS
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 document.getElementById('btn-open').onclick = () => document.getElementById('file-input').click();
 document.getElementById('file-input').onchange = e => loadFile(e.target.files[0]);
 
 $area.addEventListener('dragover', e => { e.preventDefault(); $area.classList.add('drag-over'); });
-$area.addEventListener('dragleave', e => { if(!$area.contains(e.relatedTarget)) $area.classList.remove('drag-over'); });
+$area.addEventListener('dragleave', e => { if (!$area.contains(e.relatedTarget)) $area.classList.remove('drag-over'); });
 $area.addEventListener('drop', e => {
-  e.preventDefault();
-  $area.classList.remove('drag-over');
-  if(e.dataTransfer.files.length) { loadFile(e.dataTransfer.files[0]); return; }
-  // Fallback: image URL (browser drag)
+  e.preventDefault(); $area.classList.remove('drag-over');
+  if (e.dataTransfer.files.length) { loadFile(e.dataTransfer.files[0]); return; }
   const url = e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain');
-  if(url){
-    const img = new Image(); img.crossOrigin='anonymous';
-    img.onload=()=>loadImg(img);
-    img.src=url;
-  }
+  if (url) { const img = new Image(); img.crossOrigin = 'anonymous'; img.onload = () => loadImg(img); img.src = url; }
 });
 
-// ─────────────────────────────────────────────────────
-// SECTION EXPAND / COLLAPSE
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// SECTION COLLAPSE
+// ─────────────────────────────────────────────────────────────
 document.querySelectorAll('.fx-head').forEach(h => {
   h.addEventListener('click', () => {
-    const fx  = h.dataset.fx;
-    const body = document.getElementById('body-'+fx);
-    const chev = document.getElementById('chev-'+fx);
+    const id   = h.dataset.fx;
+    const body = document.getElementById('body-' + id);
+    const chev = document.getElementById('chev-' + id);
     const open = body.classList.toggle('open');
     chev.classList.toggle('open', open);
   });
 });
 
-// ─────────────────────────────────────────────────────
-// SLIDER + TOGGLE BINDINGS
-// ─────────────────────────────────────────────────────
-function bindSlider(id, fn){
+// ─────────────────────────────────────────────────────────────
+// CONTROL BINDINGS
+// ─────────────────────────────────────────────────────────────
+
+// Center sliders (light params, -100 to +100)
+const centerSliders = [
+  ['l-temp', 'light', 'temp'],
+  ['l-tint', 'light', 'tint'],
+  ['l-exp',  'light', 'exp'],
+  ['l-con',  'light', 'con'],
+  ['l-hi',   'light', 'hi'],
+  ['l-sh',   'light', 'sh'],
+  ['l-wh',   'light', 'wh'],
+  ['l-bl',   'light', 'bl'],
+  ['l-vib',  'light', 'vib'],
+  ['l-sat',  'light', 'sat'],
+];
+centerSliders.forEach(([id, grp, key]) => {
   const el  = document.getElementById(id);
-  const val = document.getElementById(id+'-v');
+  const vEl = document.getElementById(id + '-v');
   const update = () => {
     const v = parseInt(el.value);
-    if(val) val.textContent = v;
-    // Update gradient fill
-    el.style.setProperty('--pct', (v)+'%');
-    fn(v);
+    S[grp][key] = v;
+    vEl.textContent = fmtCenter(v);
+    setCenterTrack(el, v);
     scheduleRender();
   };
   el.addEventListener('input', update);
-  update(); // init gradient
-}
-
-function bindToggle(id, fn){
-  const el = document.getElementById(id);
-  el.addEventListener('change', () => { fn(el.checked); scheduleRender(); });
-}
-
-// Initialize slider gradients
-document.querySelectorAll('input[type=range]').forEach(r => {
-  r.style.setProperty('--pct', r.value+'%');
-  r.addEventListener('input', () => r.style.setProperty('--pct', r.value+'%'));
+  setCenterTrack(el, 0); // init
 });
 
-bindToggle('grain-on',  v => S.grain.on=v);
-bindToggle('dist-on',   v => S.dist.on=v);
-bindToggle('glitch-on', v => S.glitch.on=v);
-bindToggle('portra-on', v => S.portra.on=v);
-bindToggle('gold-on',   v => S.gold.on=v);
-bindToggle('fuji-on',   v => S.fuji.on=v);
-bindToggle('cross-on',  v => S.cross.on=v);
+// Normal sliders (0-100)
+function bindSlider(id, grp, key) {
+  const el  = document.getElementById(id);
+  const vEl = document.getElementById(id + '-v');
+  const update = () => {
+    const v = parseInt(el.value);
+    S[grp][key] = v;
+    if (vEl) vEl.textContent = v;
+    setNormalTrack(el, v);
+    scheduleRender();
+  };
+  el.addEventListener('input', update);
+  setNormalTrack(el, parseInt(el.value)); // init
+}
+bindSlider('grain-amt',    'grain', 'amt');
+bindSlider('grain-size',   'grain', 'size');
+bindSlider('glitch-amt',   'glitch', 'amt');
+bindSlider('glitch-scan',  'glitch', 'scan');
+bindSlider('glitch-chroma','glitch', 'chroma');
 
-bindSlider('grain-amt',    v => S.grain.amt=v);
-bindSlider('dist-amt',     v => S.dist.amt=v);
-bindSlider('glitch-amt',   v => S.glitch.amt=v);
-bindSlider('glitch-scan',  v => S.glitch.scan=v);
-bindSlider('glitch-chroma',v => S.glitch.chroma=v);
-bindSlider('portra-amt',   v => S.portra.amt=v);
-bindSlider('gold-amt',     v => S.gold.amt=v);
-bindSlider('fuji-amt',     v => S.fuji.amt=v);
-bindSlider('cross-amt',    v => S.cross.amt=v);
+// Toggles
+function bindToggle(id, grp, key) {
+  document.getElementById(id).addEventListener('change', e => {
+    S[grp][key] = e.target.checked;
+    scheduleRender();
+  });
+}
+bindToggle('grain-on',  'grain',  'on');
+bindToggle('glitch-on', 'glitch', 'on');
 
-document.getElementById('dist-type').addEventListener('change', e => {
-  S.dist.type=e.target.value; scheduleRender();
-});
-
+// Grain type
 document.querySelectorAll('[data-grain]').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-grain]').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('[data-grain]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     S.grain.type = btn.dataset.grain;
     scheduleRender();
   });
 });
 
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // BEFORE / AFTER
-// ─────────────────────────────────────────────────────
-function toggleBA(){
-  S.showOrig = !S.showOrig;
-  [$btnBA,$bbBA].forEach(b=>{
-    b.classList.toggle('active', S.showOrig);
-    b.textContent = S.showOrig ? 'Showing Original' : 'Before / After';
+// ─────────────────────────────────────────────────────────────
+function syncBA(on) {
+  S.showOrig = on;
+  [$btnBA, $bbBA].forEach(b => {
+    b.classList.toggle('active', on);
+    b.textContent = on ? 'Showing Original' : 'Before / After';
   });
-  render();
 }
+function toggleBA() { syncBA(!S.showOrig); render(); }
 $btnBA.onclick = toggleBA;
 $bbBA.onclick  = toggleBA;
 
-// Hold spacebar for before/after
+// Hold spacebar
 document.addEventListener('keydown', e => {
-  if(e.code==='Space' && !e.repeat && S.src && !S.showOrig){
-    e.preventDefault(); S.showOrig=true;
-    [$btnBA,$bbBA].forEach(b=>{b.classList.add('active');b.textContent='Showing Original';});
-    render();
+  if (e.code === 'Space' && !e.repeat && S.src && !S.showOrig) {
+    e.preventDefault(); syncBA(true); render();
   }
 });
 document.addEventListener('keyup', e => {
-  if(e.code==='Space' && S.showOrig){
-    S.showOrig=false;
-    [$btnBA,$bbBA].forEach(b=>{b.classList.remove('active');b.textContent='Before / After';});
-    render();
-  }
+  if (e.code === 'Space' && S.showOrig) { syncBA(false); render(); }
 });
 
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // RESET
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 document.getElementById('btn-reset').onclick = () => {
-  S.grain  = {on:false,amt:40,type:'fine'};
-  S.dist   = {on:false,amt:30,type:'barrel'};
-  S.glitch = {on:false,amt:50,scan:30,chroma:60};
-  S.portra = {on:false,amt:80};
-  S.gold   = {on:false,amt:80};
-  S.fuji   = {on:false,amt:80};
-  S.cross  = {on:false,amt:80};
-  S.showOrig=false;
+  S.light  = { temp:0, tint:0, exp:0, con:0, hi:0, sh:0, wh:0, bl:0, vib:0, sat:0 };
+  S.grain  = { on:false, amt:40, size:30, type:'fine' };
+  S.glitch = { on:false, amt:50, scan:30, chroma:60 };
+  syncBA(false);
 
-  document.querySelectorAll('input[type=checkbox]').forEach(c=>c.checked=false);
+  document.querySelectorAll('input[type=checkbox]').forEach(c => c.checked = false);
 
-  const sliders=[
-    ['grain-amt',40],['dist-amt',30],
-    ['glitch-amt',50],['glitch-scan',30],['glitch-chroma',60],
-    ['portra-amt',80],['gold-amt',80],['fuji-amt',80],['cross-amt',80]
-  ];
-  sliders.forEach(([id,v])=>{
-    const el=document.getElementById(id);
-    el.value=v;
-    el.style.setProperty('--pct',v+'%');
-    const vEl=document.getElementById(id+'-v');
-    if(vEl) vEl.textContent=v;
+  centerSliders.forEach(([id]) => {
+    const el = document.getElementById(id);
+    el.value = 0;
+    document.getElementById(id + '-v').textContent = '0';
+    setCenterTrack(el, 0);
   });
 
-  document.getElementById('dist-type').value='barrel';
-  document.querySelectorAll('[data-grain]').forEach(b=>b.classList.toggle('active',b.dataset.grain==='fine'));
-  [$btnBA,$bbBA].forEach(b=>{b.classList.remove('active');b.textContent='Before / After';});
+  [['grain-amt', 40], ['grain-size', 30], ['glitch-amt', 50], ['glitch-scan', 30], ['glitch-chroma', 60]]
+    .forEach(([id, v]) => {
+      const el = document.getElementById(id);
+      el.value = v;
+      const vEl = document.getElementById(id + '-v');
+      if (vEl) vEl.textContent = v;
+      setNormalTrack(el, v);
+    });
 
-  if(S.src) render();
+  document.querySelectorAll('[data-grain]').forEach(b => b.classList.toggle('active', b.dataset.grain === 'fine'));
+
+  if (S.src) render();
 };
 
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
 // EXPORT
-// ─────────────────────────────────────────────────────
-function dl(mime, quality, ext){
-  if(!S.src){ alert('No image loaded.'); return; }
-  const url = $canvas.toDataURL(mime, quality);
-  const a   = Object.assign(document.createElement('a'), {
+// ─────────────────────────────────────────────────────────────
+function dl(mime, quality, ext) {
+  if (!S.src) { alert('No image loaded.'); return; }
+  const a = Object.assign(document.createElement('a'), {
     download: `frame_${Date.now()}.${ext}`,
-    href: url
+    href: $canvas.toDataURL(mime, quality),
   });
   a.click();
 }
-
-document.getElementById('btn-jpg').onclick = () => {
-  dl('image/jpeg', parseFloat(document.getElementById('jpg-q').value), 'jpg');
-};
+document.getElementById('btn-jpg').onclick = () => dl('image/jpeg', parseFloat(document.getElementById('jpg-q').value), 'jpg');
 document.getElementById('btn-png').onclick = () => dl('image/png', 1, 'png');
 </script>
 </body>
