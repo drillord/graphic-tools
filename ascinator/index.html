@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCINATOR</title>
+  <link rel="stylesheet" href="css/style.css?v=1">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">ASCINATOR</div>
+        <nav class="nav-links"><a href="#" class="nav-link" id="btn-login">Login</a></nav>
+      </div>
+      <div class="sidebar-body">
+
+        <!-- 1. Mode tabs -->
+        <div class="mode-tabs">
+          <button class="tab-btn active" data-mode="image">Image</button>
+          <button class="tab-btn" data-mode="text">Text</button>
+        </div>
+
+        <!-- 2. Action row -->
+        <div class="action-row">
+          <button class="btn-action" id="btn-upload">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.5 1v7M3.5 4L6.5 1l3 3M1.5 10v1.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V10" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Upload Image
+          </button>
+          <button class="btn-action" id="btn-export">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.5 9V2M3.5 6l3 3 3-3M1.5 10v1.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V10" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Export
+          </button>
+          <input type="file" id="file-input" accept="image/*" hidden>
+        </div>
+
+        <!-- 3. Character Sequence -->
+        <div class="section">
+          <div class="section-label">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 2h9M1 5.5h6M1 9h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+            </svg>
+            Character Sequence
+          </div>
+          <div class="btn-grid btn-grid-3">
+            <button class="seg-btn active" data-seq="standard">Standard</button>
+            <button class="seg-btn" data-seq="blocks">Blocks</button>
+            <button class="seg-btn" data-seq="dots">Dots</button>
+            <button class="seg-btn" data-seq="binary">Binary</button>
+            <button class="seg-btn" data-seq="braille">Braille</button>
+            <button class="seg-btn" data-seq="math">Math</button>
+            <button class="seg-btn" data-seq="lines">Lines</button>
+            <button class="seg-btn" data-seq="shading">Shading</button>
+            <button class="seg-btn" data-seq="custom">Custom</button>
+          </div>
+          <input type="text" id="custom-seq" class="custom-seq-input" placeholder="Enter characters…">
+        </div>
+
+        <!-- 4. Font Family -->
+        <div class="section">
+          <div class="section-label">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 9 5.5 1 9 9M3.2 6.5h4.6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Font Family
+          </div>
+          <div class="btn-grid btn-grid-2">
+            <button class="seg-btn active" data-font="monospace">Monospace</button>
+            <button class="seg-btn" data-font="courier">Courier New</button>
+            <button class="seg-btn" data-font="consolas">Consolas</button>
+            <button class="seg-btn" data-font="ibm">IBM Plex Mono</button>
+          </div>
+          <div class="font-upload-row">
+            <button class="btn-secondary" id="btn-font-upload">Upload Font</button>
+            <input type="file" id="font-file" accept=".ttf,.otf,.woff,.woff2" hidden>
+            <span class="font-name" id="font-name-label">No font loaded</span>
+          </div>
+          <div class="gfonts-row">
+            <input type="text" id="gfonts-input" class="gfonts-input" placeholder="Search Google Fonts…">
+            <div id="gfonts-results" class="gfonts-results" hidden></div>
+          </div>
+        </div>
+
+        <!-- 5. Sliders -->
+        <div class="section">
+          <div class="section-label">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 3h9M1 8h9M7 1v4M4 6v4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+            </svg>
+            Adjustments
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1" fill="none"/><text x="5" y="7.5" font-size="5" text-anchor="middle" fill="currentColor">A</text></svg>
+              Font Scale
+            </div>
+            <span class="slider-val" id="font-scale-val">1.00</span>
+          </div>
+          <input type="range" id="font-scale" class="slider" min="0.5" max="3" step="0.05" value="1">
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 5h2M7 5h2M3 2v6M7 2v6" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+              Char Spacing
+            </div>
+            <span class="slider-val" id="char-spacing-val">1.00</span>
+          </div>
+          <input type="range" id="char-spacing" class="slider" min="0.5" max="3" step="0.05" value="1">
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 3h8M1 7h8" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+              Line Height
+            </div>
+            <span class="slider-val" id="line-height-val">1.20</span>
+          </div>
+          <input type="range" id="line-height" class="slider" min="0.8" max="2" step="0.05" value="1.2">
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1" fill="none"/><path d="M5 1v8M1 5h8" stroke="currentColor" stroke-width="0.7"/></svg>
+              Contrast
+            </div>
+            <span class="slider-val" id="contrast-val">1.00</span>
+          </div>
+          <input type="range" id="contrast" class="slider" min="0" max="3" step="0.05" value="1">
+
+          <div class="slider-row">
+            <div class="slider-label">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v2M5 7v2M1 5h2M7 5h2M2.5 2.5l1.4 1.4M6.1 6.1l1.4 1.4M2.5 7.5l1.4-1.4M6.1 3.9l1.4-1.4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+              Brightness
+            </div>
+            <span class="slider-val" id="brightness-val">0.10</span>
+          </div>
+          <input type="range" id="brightness" class="slider" min="0" max="2" step="0.05" value="0.1">
+        </div>
+
+        <!-- 6. Toggles -->
+        <div class="section">
+          <div class="section-label">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="1" y="3" width="9" height="5" rx="2.5" stroke="currentColor" stroke-width="1" fill="none"/><circle cx="7.5" cy="5.5" r="1.5" fill="currentColor"/></svg>
+            Options
+          </div>
+
+          <!-- Invert -->
+          <div class="toggle-row">
+            <div class="toggle-label">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1" fill="none"/><path d="M5.5 1v9" stroke="currentColor" stroke-width="1"/><path d="M5.5 1C3 1 1 3 1 5.5S3 10 5.5 10" fill="currentColor"/></svg>
+              Invert
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="invert-toggle">
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </label>
+          </div>
+
+          <!-- Overlay Original -->
+          <div class="toggle-row">
+            <div class="toggle-label">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="1.5" y="2" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1" fill="none"/><path d="M3.5 4.5h4M3.5 6.5h2" stroke="currentColor" stroke-width="0.9" stroke-linecap="round"/></svg>
+              Overlay Original
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="overlay-toggle" checked>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </label>
+          </div>
+          <div class="sub-controls" id="overlay-controls">
+            <div class="slider-row">
+              <div class="slider-label">Opacity</div>
+              <span class="slider-val" id="overlay-opacity-val">0.50</span>
+            </div>
+            <input type="range" id="overlay-opacity" class="slider" min="0" max="1" step="0.01" value="0.5">
+            <div class="slider-row">
+              <div class="slider-label">Blur</div>
+              <span class="slider-val" id="overlay-blur-val">0</span>
+            </div>
+            <input type="range" id="overlay-blur" class="slider" min="0" max="20" step="0.5" value="0">
+          </div>
+
+          <!-- Edge Detection -->
+          <div class="toggle-row">
+            <div class="toggle-label">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 8 4 3l2 3 2-4 2 5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Edge Detection
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="edge-toggle" checked>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </label>
+          </div>
+          <div class="sub-controls" id="edge-controls">
+            <div class="slider-row">
+              <div class="slider-label">Intensity</div>
+              <span class="slider-val" id="edge-intensity-val">0.50</span>
+            </div>
+            <input type="range" id="edge-intensity" class="slider" min="0" max="1" step="0.01" value="0.5">
+          </div>
+        </div>
+
+        <!-- 7. Color -->
+        <div class="section">
+          <div class="section-label">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1" fill="none"/><circle cx="3.5" cy="4.5" r="1" fill="currentColor"/><circle cx="7.5" cy="4.5" r="1" fill="currentColor"/><circle cx="5.5" cy="7.5" r="1" fill="currentColor"/></svg>
+            Color
+            <button class="original-btn" id="btn-original-color">Original</button>
+          </div>
+          <div class="color-palette" id="color-palette">
+            <div class="color-swatch active" data-color="#ffffff" style="background:#ffffff;" title="White"></div>
+            <div class="color-swatch" data-color="#e0e0e0" style="background:#e0e0e0;" title="Silver"></div>
+            <div class="color-swatch" data-color="#4af626" style="background:#4af626;" title="Matrix Green"></div>
+            <div class="color-swatch" data-color="#00cfff" style="background:#00cfff;" title="Cyan"></div>
+            <div class="color-swatch" data-color="#ff6b35" style="background:#ff6b35;" title="Orange"></div>
+            <div class="color-swatch" data-color="#f7e03c" style="background:#f7e03c;" title="Yellow"></div>
+            <div class="color-swatch" data-color="#c77dff" style="background:#c77dff;" title="Purple"></div>
+            <div class="color-swatch" data-color="#ff4d6d" style="background:#ff4d6d;" title="Pink"></div>
+            <div class="color-swatch checkered" data-color="transparent" title="Transparent"></div>
+          </div>
+        </div>
+
+        <!-- 8. Background Color -->
+        <div class="section">
+          <div class="section-label">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="1" y="1" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1" fill="none"/></svg>
+            Background Color
+            <span class="pro-badge">PRO</span>
+          </div>
+          <div class="color-palette" id="bg-palette">
+            <div class="color-swatch active checkered" data-color="transparent" title="Transparent"></div>
+            <div class="color-swatch" data-color="#000000" style="background:#000000;" title="Black"></div>
+            <div class="color-swatch" data-color="#0a0a0a" style="background:#0a0a0a;" title="Near Black"></div>
+            <div class="color-swatch" data-color="#1a1a2e" style="background:#1a1a2e;" title="Dark Navy"></div>
+            <div class="color-swatch" data-color="#0d1117" style="background:#0d1117;" title="GitHub Dark"></div>
+            <div class="color-swatch" data-color="#ffffff" style="background:#ffffff;" title="White"></div>
+            <div class="color-swatch" data-color="#f8f8f8" style="background:#f8f8f8;" title="Off White"></div>
+            <div class="color-swatch" data-color="#1e1e1e" style="background:#1e1e1e;" title="VS Code Dark"></div>
+          </div>
+        </div>
+
+        <!-- 9. Char Background -->
+        <div class="section">
+          <div class="toggle-row">
+            <div class="toggle-label">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="1.5" y="2.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1" fill="none"/><rect x="3" y="4" width="5" height="3" rx="0.5" fill="currentColor" opacity="0.4"/></svg>
+              Char Background
+              <span class="pro-badge">PRO</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="char-bg-toggle">
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 10. Tone Color Map -->
+        <div class="section">
+          <div class="toggle-row">
+            <div class="toggle-label">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#ff4d6d"/><stop offset="50%" stop-color="#f7e03c"/><stop offset="100%" stop-color="#4af626"/></linearGradient></defs><rect x="1" y="3.5" width="9" height="4" rx="1" fill="url(#tg)" stroke="none"/></svg>
+              Tone Color Map
+              <span class="pro-badge">PRO</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="tone-map-toggle">
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+    <main class="canvas-area">
+      <div id="canvas-placeholder">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="8" width="40" height="32" rx="3" stroke="currentColor" stroke-width="2" fill="none"/>
+          <circle cx="16" cy="19" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M4 33l10-10 8 8 6-6 16 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M24 4v8M20 6l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p>Upload an image to begin</p>
+      </div>
+      <canvas id="main-canvas" hidden></canvas>
+    </main>
+  </div>
+  <script src="js/processor.js?v=1"></script>
+  <script src="js/renderer.js?v=1"></script>
+  <script src="js/fonts.js?v=1"></script>
+  <script src="js/exporter.js?v=1"></script>
+  <script src="js/app.js?v=1"></script>
+</body>
+</html>

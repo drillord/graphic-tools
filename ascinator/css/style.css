@@ -1,0 +1,591 @@
+/* ─── Custom Properties ─────────────────────────────────────────────────── */
+:root {
+  --panel-bg:      #111111;
+  --panel-border:  #2a2a2a;
+  --section-bg:    #181818;
+  --track-bg:      #252525;
+  --canvas-bg:     #0a0a0a;
+  --text-muted:    #555555;
+  --text-base:     #999999;
+  --text-bright:   #e0e0e0;
+  --accent:        #ffffff;
+  --sidebar-w:     300px;
+  --radius:        4px;
+}
+
+/* ─── Reset / Base ──────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: monospace;
+  font-size: 11px;
+  background: var(--canvas-bg);
+  color: var(--text-base);
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  line-height: 1;
+}
+
+input {
+  font-family: inherit;
+}
+
+/* ─── Layout ────────────────────────────────────────────────────────────── */
+.app-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+/* ─── Sidebar ───────────────────────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--panel-bg);
+  border-right: 1px solid var(--panel-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--panel-border);
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: var(--text-bright);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 10px;
+  letter-spacing: 1px;
+  transition: color 0.15s;
+}
+
+.nav-link:hover {
+  color: var(--text-bright);
+}
+
+.sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  /* thin dark scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--panel-border) transparent;
+}
+
+.sidebar-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-body::-webkit-scrollbar-thumb {
+  background: var(--panel-border);
+  border-radius: 2px;
+}
+
+/* ─── Mode Tabs ─────────────────────────────────────────────────────────── */
+.mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: monospace;
+  padding: 10px 0;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab-btn:hover {
+  color: var(--text-base);
+}
+
+.tab-btn.active {
+  color: var(--text-bright);
+  border-bottom-color: var(--accent);
+}
+
+/* ─── Action Row ────────────────────────────────────────────────────────── */
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: var(--section-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  color: var(--text-base);
+  font-size: 10px;
+  padding: 7px 6px;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.btn-action:hover {
+  border-color: var(--accent);
+  color: var(--text-bright);
+}
+
+/* ─── Section ───────────────────────────────────────────────────────────── */
+.section {
+  padding: 12px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.section-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* ─── Button Grid ───────────────────────────────────────────────────────── */
+.btn-grid {
+  gap: 4px;
+  margin-bottom: 6px;
+  display: grid;
+}
+
+.btn-grid-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.btn-grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.seg-btn {
+  background: var(--track-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 600;
+  font-family: monospace;
+  padding: 5px 3px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  text-align: center;
+}
+
+.seg-btn:hover {
+  color: var(--text-base);
+  border-color: var(--text-muted);
+}
+
+.seg-btn.active {
+  background: #fff;
+  border-color: #fff;
+  color: #000;
+}
+
+/* ─── Custom Seq Input ──────────────────────────────────────────────────── */
+.custom-seq-input {
+  display: none;
+  width: 100%;
+  background: var(--track-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  color: var(--text-bright);
+  font-size: 11px;
+  font-family: monospace;
+  padding: 6px 8px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.custom-seq-input.visible {
+  display: block;
+}
+
+.custom-seq-input:focus {
+  border-color: var(--accent);
+}
+
+/* ─── Font Upload Row ───────────────────────────────────────────────────── */
+.font-upload-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  color: var(--text-base);
+  font-size: 9px;
+  font-family: monospace;
+  padding: 4px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-muted);
+  color: var(--text-bright);
+}
+
+.font-name {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 9px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+/* ─── Google Fonts Row ──────────────────────────────────────────────────── */
+.gfonts-row {
+  margin-top: 6px;
+  position: relative;
+}
+
+.gfonts-input {
+  width: 100%;
+  background: var(--track-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  color: var(--text-bright);
+  font-size: 10px;
+  font-family: monospace;
+  padding: 5px 8px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.gfonts-input::placeholder {
+  color: var(--text-muted);
+}
+
+.gfonts-input:focus {
+  border-color: var(--accent);
+}
+
+.gfonts-results {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  width: 100%;
+  background: #1e1e1e;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 100;
+  scrollbar-width: thin;
+  scrollbar-color: var(--panel-border) transparent;
+}
+
+.gfonts-results[hidden] {
+  display: none;
+}
+
+.gfonts-item {
+  padding: 6px 10px;
+  font-size: 10px;
+  color: var(--text-base);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.gfonts-item:hover {
+  background: var(--track-bg);
+  color: var(--text-bright);
+}
+
+/* ─── Sliders ───────────────────────────────────────────────────────────── */
+.slider-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  margin-bottom: 3px;
+}
+
+.slider-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text-base);
+}
+
+.slider-val {
+  font-size: 10px;
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 3px;
+  background: var(--track-bg);
+  border: 1px solid #333333;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #444444;
+  box-shadow: 0 0 0 1px #000000, 0 1px 3px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+input[type="range"].slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+input[type="range"].slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: none;
+  box-shadow: 0 0 0 1px #000000, 0 1px 3px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+input[type="range"].slider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+}
+
+/* ─── Toggles ───────────────────────────────────────────────────────────── */
+.toggle-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.toggle-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--text-base);
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.toggle-track {
+  display: block;
+  width: 30px;
+  height: 16px;
+  background: var(--track-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: left 0.15s, background 0.15s;
+}
+
+.toggle-switch input:checked ~ .toggle-track {
+  border-color: var(--accent);
+}
+
+.toggle-switch input:checked ~ .toggle-track .toggle-thumb {
+  left: 16px;
+  background: #ffffff;
+}
+
+/* ─── Sub-controls ──────────────────────────────────────────────────────── */
+.sub-controls {
+  padding: 4px 0 4px 4px;
+}
+
+/* ─── Color Palette ─────────────────────────────────────────────────────── */
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.12s, transform 0.1s;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch.active {
+  border-color: var(--accent);
+}
+
+.color-swatch.checkered {
+  background-image:
+    linear-gradient(45deg, #555 25%, transparent 25%),
+    linear-gradient(-45deg, #555 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #555 75%),
+    linear-gradient(-45deg, transparent 75%, #555 75%);
+  background-size: 6px 6px;
+  background-position: 0 0, 0 3px, 3px -3px, -3px 0px;
+  background-color: #333;
+}
+
+/* ─── Original Color Button ─────────────────────────────────────────────── */
+.original-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-size: 8px;
+  font-family: monospace;
+  padding: 2px 6px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.original-btn:hover,
+.original-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ─── PRO Badge ─────────────────────────────────────────────────────────── */
+.pro-badge {
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: #c9a227;
+  color: #000000;
+  padding: 1px 4px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+/* ─── Canvas Area ───────────────────────────────────────────────────────── */
+.canvas-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--canvas-bg);
+  overflow: hidden;
+  position: relative;
+}
+
+#canvas-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #2a2a2a;
+}
+
+#canvas-placeholder p {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #2a2a2a;
+}
+
+#main-canvas {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+#main-canvas[hidden] {
+  display: none;
+}
