@@ -56,15 +56,17 @@ window.Effects = (() => {
       const sliceH  = Math.max(1, Math.floor(Math.abs(Math.sin(t * 0.1 + i)) * 18 * intensity));
       const shiftX  = Math.floor((noise2 - 0.5) * 2 * w * 0.3 * intensity);
 
+      const colorShift = Math.max(1, Math.round(intensity * 8));
       for (let y = sliceY; y < Math.min(sliceY + sliceH, h); y++) {
         for (let x = 0; x < w; x++) {
-          const srcX = ((x - shiftX) % w + w) % w;
-          const si = (y * w + srcX) * 4;
-          const di = (y * w + x)    * 4;
-          out[di]   = src[si];
-          out[di+1] = src[si+1];
-          out[di+2] = src[si+2];
-          out[di+3] = src[si+3];
+          const rX = ((x - shiftX - colorShift) % w + w) % w;
+          const gX = ((x - shiftX)              % w + w) % w;
+          const bX = ((x - shiftX + colorShift) % w + w) % w;
+          const di = (y * w + x) * 4;
+          out[di]   = src[(y * w + rX) * 4];
+          out[di+1] = src[(y * w + gX) * 4 + 1];
+          out[di+2] = src[(y * w + bX) * 4 + 2];
+          out[di+3] = src[(y * w + gX) * 4 + 3];
         }
       }
     }

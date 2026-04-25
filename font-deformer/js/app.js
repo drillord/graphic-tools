@@ -29,8 +29,9 @@
       wave:      { enabled: false, intensity: 0.5 },
       distortion:{ enabled: false, intensity: 0.5 },
       noise:     { enabled: false, intensity: 0.5 },
-      chromatic: { enabled: false, intensity: 0.5 },
-      vhs:       { enabled: false, intensity: 0.5 },
+      chromatic:   { enabled: false, intensity: 0.5 },
+      vhs:         { enabled: false, intensity: 0.5 },
+      letterSplit: { enabled: false, intensity: 0.5 },
     },
 
     effectMeta: {
@@ -38,8 +39,9 @@
       wave:      { label: 'Wave',                fn: 'wave' },
       distortion:{ label: 'Distortion',          fn: 'distortion' },
       noise:     { label: 'Film Grain',          fn: 'noise' },
-      chromatic: { label: 'Chromatic Aberration',fn: 'chromaticAberration' },
-      vhs:       { label: 'VHS',                 fn: 'vhs' },
+      chromatic:   { label: 'Chromatic Aberration', fn: 'chromaticAberration' },
+      vhs:         { label: 'VHS',                 fn: 'vhs' },
+      letterSplit: { label: 'Letter Split',         fn: 'letterSplit' },
     },
 
     anim: {
@@ -60,6 +62,10 @@
   /* ── Offscreen source canvas (uneffected text) ── */
   const srcCanvas   = document.createElement('canvas');
   const srcCtx      = srcCanvas.getContext('2d', { willReadFrequently: true });
+
+  /* ── Offscreen canvas for letterSplit compositing ── */
+  const lsCanvas    = document.createElement('canvas');
+  const lsCtx       = lsCanvas.getContext('2d');
 
   /* ── RAF state ── */
   let rafId = null;
@@ -139,7 +145,79 @@
     $('canvas-size-label').textContent = `${w} × ${h} px`;
   }
 
+  function drawLetterSplitText() {
+    const { w, h } = state.canvas;
+    const scheme   = state.schemes[state.scheme];
+    const eff      = state.effects.letterSplit;
+    const lines    = state.text.split('\n');
+    const ls       = state.letterSpacing;
+
+    lsCanvas.width  = w;
+    lsCanvas.height = h;
+
+    srcCtx.fillStyle = scheme.bg;
+    srcCtx.fillRect(0, 0, w, h);
+
+    const bigFont  = `${state.fontWeight} ${state.fontSize}px ${state.fontFamily}`;
+    const cellSize = Math.max(3, Math.round(state.fontSize * (0.16 - eff.intensity * 0.11)));
+    const lineGap  = cellSize * 1.3;
+    const colGap   = cellSize * 0.88;
+    const pad      = state.fontSize;
+
+    const lineH  = state.fontSize * 1.2;
+    const totalH = lines.length * lineH;
+    const startY = (h - totalH) / 2 + lineH / 2;
+
+    srcCtx.font          = bigFont;
+    srcCtx.letterSpacing = '0px';
+
+    lines.forEach((line, li) => {
+      const lineY = startY + li * lineH;
+      const chars = [...line];
+      const totalW = chars.reduce((s, c) => s + srcCtx.measureText(c).width, 0)
+                   + ls * Math.max(0, chars.length - 1);
+      let curX = (w - totalW) / 2;
+
+      chars.forEach(char => {
+        const charW = srcCtx.measureText(char).width;
+        const adv   = charW + ls;
+
+        lsCtx.clearRect(0, 0, w, h);
+
+        // Fill bounding area with tiny versions of this character
+        lsCtx.font          = `${state.fontWeight} ${cellSize}px ${state.fontFamily}`;
+        lsCtx.fillStyle     = scheme.fg;
+        lsCtx.textBaseline  = 'top';
+        lsCtx.textAlign     = 'left';
+        lsCtx.letterSpacing = '0px';
+        lsCtx.shadowColor   = scheme.glow;
+        lsCtx.shadowBlur    = state.scheme === 'light' ? 0 : cellSize * 0.6;
+
+        for (let ty = lineY - pad; ty < lineY + pad; ty += lineGap) {
+          for (let tx = curX - pad; tx < curX + charW + pad; tx += colGap) {
+            lsCtx.fillText(char, tx, ty);
+          }
+        }
+        lsCtx.shadowBlur = 0;
+
+        // Clip tiny chars to the outline of the big character
+        lsCtx.globalCompositeOperation = 'destination-in';
+        lsCtx.font         = bigFont;
+        lsCtx.textBaseline = 'middle';
+        lsCtx.textAlign    = 'left';
+        lsCtx.fillStyle    = 'white';
+        lsCtx.fillText(char, curX, lineY);
+        lsCtx.globalCompositeOperation = 'source-over';
+
+        srcCtx.drawImage(lsCanvas, 0, 0);
+        curX += adv;
+      });
+    });
+  }
+
   function drawSourceText() {
+    if (state.effects.letterSplit.enabled) { drawLetterSplitText(); return; }
+
     const { w, h } = state.canvas;
     const scheme = state.schemes[state.scheme];
     const lines  = state.text.split('\n');
