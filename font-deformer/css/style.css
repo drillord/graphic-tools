@@ -24,7 +24,7 @@
 .scheme-neon   { --accent: #00ff88; --accent2: #00cfff; --canvas-bg: #06060f; --canvas-fg: #00ff88; --glow: 0 0 20px #00ff8866, 0 0 60px #00ff8822; }
 .scheme-retro  { --accent: #ff9500; --accent2: #ffd700; --canvas-bg: #160800; --canvas-fg: #ff9500; --glow: 0 0 20px #ff950066, 0 0 60px #ff950022; }
 .scheme-dark   { --accent: #ffffff; --accent2: #888888; --canvas-bg: #000000; --canvas-fg: #ffffff; --glow: 0 0 20px #ffffff33; }
-.scheme-light  { --accent: #4455ff; --accent2: #7788ff; --canvas-bg: #f8f8f8; --canvas-fg: #111111; --glow: none; }
+.scheme-light  { --accent: #ffffff; --accent2: #aaaaaa; --canvas-bg: #f8f8f8; --canvas-fg: #111111; --glow: none; }
 .scheme-vapor  { --accent: #ff71ce; --accent2: #b967ff; --canvas-bg: #0d0221; --canvas-fg: #ff71ce; --glow: 0 0 20px #ff71ce66, 0 0 60px #b967ff22; }
 .scheme-matrix { --accent: #00ff41; --accent2: #00aa2b; --canvas-bg: #001100; --canvas-fg: #00ff41; --glow: 0 0 20px #00ff4166, 0 0 60px #00ff4111; }
 
@@ -275,6 +275,9 @@ input[type="range"]::-moz-range-thumb {
   border-top: none;
   border-left: none;
   transform: rotate(45deg);
+}
+.scheme-light .checkbox-wrap input:checked ~ .checkbox-visual::after {
+  border-color: #111;
 }
 
 /* ── Toggle (for animation) ── */
