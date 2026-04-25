@@ -69,20 +69,7 @@ window.Effects = (() => {
       }
     }
 
-    // 2. RGB channel horizontal split
-    const shift = Math.max(1, Math.floor(intensity * 14));
-    const chOut = new Uint8ClampedArray(out);
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const di = (y * w + x) * 4;
-        const rX = clamp(x + shift, 0, w - 1);
-        const bX = clamp(x - shift, 0, w - 1);
-        chOut[di]   = out[(y * w + rX) * 4];
-        chOut[di+2] = out[(y * w + bX) * 4 + 2];
-      }
-    }
-
-    return new ImageData(chOut, w, h);
+    return new ImageData(out, w, h);
   }
 
   /* ─────────────────────────────────────────────────────────
