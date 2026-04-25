@@ -206,15 +206,12 @@
 
         if (!animating) {
           // Static — full fill
-          lsCtx.fillStyle   = scheme.fg;
-          lsCtx.shadowColor = scheme.glow;
-          lsCtx.shadowBlur  = state.scheme === 'light' ? 0 : cellSize * 0.6;
+          lsCtx.fillStyle = scheme.fg;
           for (let row = 0; row < nRows; row++) {
             for (let col = 0; col < nCols; col++) {
               lsCtx.fillText(char, curX - pad + col * colGap, lineY - pad + row * lineGap);
             }
           }
-          lsCtx.shadowBlur = 0;
         } else {
           // Matrix rain — each column has an independent falling streak
           const trailLen = Math.max(2, Math.round(nRows * 0.45));
