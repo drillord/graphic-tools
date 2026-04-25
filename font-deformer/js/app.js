@@ -67,6 +67,10 @@
   const lsCanvas    = document.createElement('canvas');
   const lsCtx       = lsCanvas.getContext('2d');
 
+  /* ── Work canvas for reduced-resolution effect processing ── */
+  const workCanvas  = document.createElement('canvas');
+  const workCtx     = workCanvas.getContext('2d', { willReadFrequently: true });
+
   /* ── RAF state ── */
   let rafId = null;
   let lastTs = null;
@@ -250,20 +254,44 @@
     srcCtx.shadowBlur = 0;
   }
 
+  function animScale() {
+    const w = state.canvas.w;
+    if (!state.anim.enabled) return 1.0;
+    if (w <= 900)  return 1.0;
+    if (w <= 1440) return 0.6;
+    return 0.4;
+  }
+
   function applyEffects(time) {
     const { w, h } = state.canvas;
-    let imgData = srcCtx.getImageData(0, 0, w, h);
+    const scale = animScale();
+    const rw = Math.round(w * scale);
+    const rh = Math.round(h * scale);
+
+    if (workCanvas.width !== rw || workCanvas.height !== rh) {
+      workCanvas.width  = rw;
+      workCanvas.height = rh;
+    }
+
+    // Scale srcCanvas down to work resolution
+    workCtx.drawImage(srcCanvas, 0, 0, rw, rh);
+    let imgData = workCtx.getImageData(0, 0, rw, rh);
 
     for (const [key, meta] of Object.entries(state.effectMeta)) {
       const eff = state.effects[key];
       if (!eff.enabled) continue;
       const fn = Effects[meta.fn];
-      if (fn) {
-        imgData = fn(imgData, w, h, eff.intensity, time);
-      }
+      if (fn) imgData = fn(imgData, rw, rh, eff.intensity, time);
     }
 
-    ctx.putImageData(imgData, 0, 0);
+    if (scale < 1.0) {
+      workCtx.putImageData(imgData, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'medium';
+      ctx.drawImage(workCanvas, 0, 0, w, h);
+    } else {
+      ctx.putImageData(imgData, 0, 0);
+    }
   }
 
   function renderOnce() {
