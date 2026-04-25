@@ -31,7 +31,7 @@
       noise:     { enabled: false, intensity: 0.5 },
       chromatic:   { enabled: false, intensity: 0.5 },
       vhs:         { enabled: false, intensity: 0.5 },
-      letterSplit: { enabled: false, intensity: 0.5 },
+      letterSplit: { enabled: false, size: 0.5, spacing: 0.3 },
     },
 
     effectMeta: {
@@ -41,7 +41,8 @@
       noise:     { label: 'Film Grain',          fn: 'noise' },
       chromatic:   { label: 'Chromatic Aberration', fn: 'chromaticAberration' },
       vhs:         { label: 'VHS',                 fn: 'vhs' },
-      letterSplit: { label: 'Letter Split',         fn: 'letterSplit' },
+      letterSplit: { label: 'Letter Split', fn: 'letterSplit',
+                     controls: [{ key: 'size', label: 'Size' }, { key: 'spacing', label: 'Spacing' }] },
     },
 
     anim: {
@@ -87,12 +88,22 @@
     list.innerHTML = '';
 
     for (const [key, meta] of Object.entries(state.effectMeta)) {
-      const eff = state.effects[key];
+      const eff      = state.effects[key];
+      const controls = meta.controls || [{ key: 'intensity', label: 'Intensity' }];
+
+      const ctrlsHTML = controls.map(ctrl => {
+        const val = eff[ctrl.key] ?? 0.5;
+        return `<div class="row-control">
+          <label>${ctrl.label}</label>
+          <input type="range" min="0" max="1" step="0.01"
+                 value="${val}" data-eff="${key}" data-ctrl="${ctrl.key}">
+          <span class="val-badge" id="eff-val-${key}-${ctrl.key}">${Math.round(val * 100)}%</span>
+        </div>`;
+      }).join('');
 
       const row = document.createElement('div');
       row.className = 'effect-row';
       row.id = `eff-row-${key}`;
-
       row.innerHTML = `
         <div class="effect-header">
           <label class="checkbox-wrap">
@@ -101,37 +112,32 @@
           </label>
           <span class="effect-name" data-toggle="${key}">${meta.label}</span>
         </div>
-        <div class="effect-controls">
-          <div class="row-control">
-            <label>Intensity</label>
-            <input type="range" min="0" max="1" step="0.01"
-                   value="${eff.intensity}" data-effect-intensity="${key}">
-            <span class="val-badge" id="eff-val-${key}">${Math.round(eff.intensity * 100)}%</span>
-          </div>
-        </div>`;
+        <div class="effect-controls">${ctrlsHTML}</div>`;
 
       list.appendChild(row);
 
-      // checkbox
       row.querySelector(`input[data-effect="${key}"]`).addEventListener('change', e => {
         state.effects[key].enabled = e.target.checked;
         row.classList.toggle('active', e.target.checked);
         renderOnce();
       });
 
-      // name click → toggle controls open (not enable)
       row.querySelector(`[data-toggle="${key}"]`).addEventListener('click', () => {
         row.classList.toggle('open');
         const ctl = row.querySelector('.effect-controls');
         if (ctl) ctl.style.display = row.classList.contains('open') ? 'block' : 'none';
       });
 
-      // intensity slider
-      row.querySelector(`[data-effect-intensity="${key}"]`).addEventListener('input', e => {
-        const v = parseFloat(e.target.value);
-        state.effects[key].intensity = v;
-        $(`eff-val-${key}`).textContent = Math.round(v * 100) + '%';
-        renderOnce();
+      row.querySelectorAll('[data-eff][data-ctrl]').forEach(slider => {
+        slider.addEventListener('input', e => {
+          const k = e.target.dataset.eff;
+          const c = e.target.dataset.ctrl;
+          const v = parseFloat(e.target.value);
+          state.effects[k][c] = v;
+          const badge = $(`eff-val-${k}-${c}`);
+          if (badge) badge.textContent = Math.round(v * 100) + '%';
+          renderOnce();
+        });
       });
     }
   }
@@ -149,12 +155,13 @@
     $('canvas-size-label').textContent = `${w} × ${h} px`;
   }
 
-  function drawLetterSplitText() {
+  function drawLetterSplitText(time) {
     const { w, h } = state.canvas;
     const scheme   = state.schemes[state.scheme];
     const eff      = state.effects.letterSplit;
     const lines    = state.text.split('\n');
     const ls       = state.letterSpacing;
+    const animating = state.anim.enabled;
 
     lsCanvas.width  = w;
     lsCanvas.height = h;
@@ -163,14 +170,15 @@
     srcCtx.fillRect(0, 0, w, h);
 
     const bigFont  = `${state.fontWeight} ${state.fontSize}px ${state.fontFamily}`;
-    const cellSize = Math.max(3, Math.round(state.fontSize * (0.16 - eff.intensity * 0.11)));
-    const lineGap  = cellSize * 1.3;
-    const colGap   = cellSize * 0.88;
-    const pad      = state.fontSize;
+    const cellSize = Math.max(3, Math.round(state.fontSize * (0.18 - eff.size * 0.14)));
+    const lineGap  = cellSize * (1.1 + eff.spacing * 2.0);
+    const colGap   = cellSize * (0.7  + eff.spacing * 1.5);
+    const pad      = state.fontSize * 0.7;
 
-    const lineH  = state.fontSize * 1.2;
-    const totalH = lines.length * lineH;
-    const startY = (h - totalH) / 2 + lineH / 2;
+    const lineH    = state.fontSize * 1.2;
+    const totalH   = lines.length * lineH;
+    const startY   = (h - totalH) / 2 + lineH / 2;
+    const matrixSpeed = 3.0 * state.anim.speed;
 
     srcCtx.font          = bigFont;
     srcCtx.letterSpacing = '0px';
@@ -187,29 +195,51 @@
         const adv   = charW + ls;
 
         lsCtx.clearRect(0, 0, w, h);
-
-        // Fill bounding area with tiny versions of this character
         lsCtx.font          = `${state.fontWeight} ${cellSize}px ${state.fontFamily}`;
-        lsCtx.fillStyle     = scheme.fg;
         lsCtx.textBaseline  = 'top';
         lsCtx.textAlign     = 'left';
         lsCtx.letterSpacing = '0px';
-        lsCtx.shadowColor   = scheme.glow;
-        lsCtx.shadowBlur    = state.scheme === 'light' ? 0 : cellSize * 0.6;
+        lsCtx.shadowBlur    = 0;
 
-        for (let ty = lineY - pad; ty < lineY + pad; ty += lineGap) {
-          for (let tx = curX - pad; tx < curX + charW + pad; tx += colGap) {
-            lsCtx.fillText(char, tx, ty);
+        const nRows = Math.ceil((2 * pad) / lineGap) + 2;
+        const nCols = Math.ceil((charW + 2 * pad) / colGap) + 2;
+
+        if (!animating) {
+          // Static — full fill
+          lsCtx.fillStyle   = scheme.fg;
+          lsCtx.shadowColor = scheme.glow;
+          lsCtx.shadowBlur  = state.scheme === 'light' ? 0 : cellSize * 0.6;
+          for (let row = 0; row < nRows; row++) {
+            for (let col = 0; col < nCols; col++) {
+              lsCtx.fillText(char, curX - pad + col * colGap, lineY - pad + row * lineGap);
+            }
           }
+          lsCtx.shadowBlur = 0;
+        } else {
+          // Matrix rain — each column has an independent falling streak
+          const trailLen = Math.max(2, Math.round(nRows * 0.45));
+          for (let col = 0; col < nCols; col++) {
+            const phase   = (col * 3.7 + 1) % nRows;
+            const headRow = Math.floor((time * matrixSpeed + phase) % nRows);
+            for (let row = 0; row < nRows; row++) {
+              const behind = (headRow - row + nRows) % nRows;
+              if (behind >= trailLen) continue;
+              const alpha = behind === 0 ? 1.0 : 1.0 - behind / trailLen;
+              lsCtx.globalAlpha = alpha;
+              lsCtx.fillStyle   = behind === 0 ? '#ffffff' : scheme.fg;
+              lsCtx.fillText(char, curX - pad + col * colGap, lineY - pad + row * lineGap);
+            }
+          }
+          lsCtx.globalAlpha = 1;
         }
-        lsCtx.shadowBlur = 0;
 
-        // Clip tiny chars to the outline of the big character
+        // Clip tiny chars to big character outline
         lsCtx.globalCompositeOperation = 'destination-in';
         lsCtx.font         = bigFont;
         lsCtx.textBaseline = 'middle';
         lsCtx.textAlign    = 'left';
         lsCtx.fillStyle    = 'white';
+        lsCtx.globalAlpha  = 1;
         lsCtx.fillText(char, curX, lineY);
         lsCtx.globalCompositeOperation = 'source-over';
 
@@ -219,8 +249,8 @@
     });
   }
 
-  function drawSourceText() {
-    if (state.effects.letterSplit.enabled) { drawLetterSplitText(); return; }
+  function drawSourceText(time = 0) {
+    if (state.effects.letterSplit.enabled) { drawLetterSplitText(time); return; }
 
     const { w, h } = state.canvas;
     const scheme = state.schemes[state.scheme];
@@ -295,7 +325,7 @@
   }
 
   function renderOnce() {
-    drawSourceText();
+    drawSourceText(state.anim.time);
     applyEffects(state.anim.time);
   }
 
@@ -309,7 +339,7 @@
 
     state.anim.time += dt * state.anim.speed;
 
-    drawSourceText();
+    drawSourceText(state.anim.time);
     applyEffects(state.anim.time);
 
     // FPS counter
@@ -344,7 +374,7 @@
 
   // Returns a canvas with a given anim time rendered (for GIF frames)
   function makeFrameCanvas(time) {
-    drawSourceText();      // always draws into srcCanvas
+    drawSourceText(time);  // always draws into srcCanvas
     const fc = document.createElement('canvas');
     fc.width  = state.canvas.w;
     fc.height = state.canvas.h;
@@ -375,9 +405,17 @@
 
     /* Font size */
     const fsSlider = $('font-size');
+    const fsInput  = $('font-size-val');
     fsSlider.addEventListener('input', e => {
       state.fontSize = parseInt(e.target.value);
-      $('font-size-val').textContent = state.fontSize;
+      fsInput.value  = state.fontSize;
+      renderOnce();
+    });
+    fsInput.addEventListener('change', e => {
+      const v = Math.max(1, parseInt(e.target.value) || 1);
+      state.fontSize = v;
+      fsSlider.value = Math.min(480, v);
+      fsInput.value  = v;
       renderOnce();
     });
 

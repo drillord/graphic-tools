@@ -140,6 +140,23 @@ html, body {
   text-align: right;
   flex-shrink: 0;
 }
+.val-input {
+  font-size: 10px;
+  font-family: inherit;
+  color: var(--accent);
+  width: 46px;
+  text-align: right;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--panel-border);
+  outline: none;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+.val-input::-webkit-outer-spin-button,
+.val-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.val-input:focus { border-color: var(--accent); }
 
 /* ── Range input ── */
 input[type="range"] {
