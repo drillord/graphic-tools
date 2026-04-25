@@ -189,7 +189,7 @@ window.Effects = (() => {
     if (jitter > 0) {
       const jOut = new Uint8ClampedArray(out);
       for (let y = 0; y < h; y++) {
-        const shift = Math.floor((hash(y, 0, time * 10) - 0.5) * 2 * jitter * intensity);
+        const shift = Math.floor((hash(y, 0, Math.floor(time * 10)) - 0.5) * 2 * jitter * intensity);
         for (let x = 0; x < w; x++) {
           const srcX = ((x + shift) % w + w) % w;
           const si = (y * w + srcX) * 4;
