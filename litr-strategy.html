@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --ink:     #111118;
+    --ink2:    #3a3a4a;
+    --ink3:    #7a7a8a;
+    --rule:    #e4e4ec;
+    --accent:  #1a1a2e;
+    --punch:   #e8321e;
+    --punch-l: #fdf0ee;
+    --teal:    #006a67;
+    --teal-l:  #e8f4f3;
+    --amber:   #9a5c00;
+    --amber-l: #fdf5e6;
+    --purple:  #4a2080;
+    --purple-l:#f0eaf8;
+    --page-w:  740px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.6;
+    color: var(--ink);
+    background: #fff;
+    padding: 0;
+  }
+
+  /* ── Cover page ── */
+  .cover {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--accent);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 64px 72px;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -80px;
+    width: 420px; height: 420px;
+    border-radius: 50%;
+    background: var(--punch);
+    opacity: 0.18;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: 180px; right: 100px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0.04;
+  }
+  .cover-label {
+    font-size: 9pt;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--punch);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .cover-title {
+    font-size: 48pt;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  .cover-sub {
+    font-size: 14pt;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 48px;
+    letter-spacing: 0.5px;
+  }
+  .cover-divider {
+    width: 48px;
+    height: 3px;
+    background: var(--punch);
+    margin-bottom: 32px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+  }
+  .cover-meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .cover-meta-item .label {
+    font-size: 7.5pt;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+  }
+  .cover-meta-item .val {
+    font-size: 10pt;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+  }
+
+  /* ── Content pages ── */
+  .page {
+    width: 100%;
+    padding: 64px 72px;
+    page-break-after: always;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* ── Page header ── */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 48px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .page-header-brand {
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: var(--ink3);
+    text-transform: uppercase;
+  }
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    font-weight: 600;
+    color: var(--punch);
+    letter-spacing: 1px;
+  }
+
+  /* ── Section headers ── */
+  h1 {
+    font-size: 28pt;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  h2 {
+    font-size: 16pt;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+  h3 {
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .intro-text {
+    font-size: 12pt;
+    color: var(--ink2);
+    line-height: 1.7;
+    max-width: 580px;
+    margin-bottom: 36px;
+    margin-top: 12px;
+  }
+
+  /* ── Platform table ── */
+  .table-wrap { overflow: hidden; border-radius: 8px; border: 1px solid var(--rule); margin: 20px 0; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: var(--ink); }
+  thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 8pt;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  tbody tr { border-bottom: 1px solid var(--rule); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:nth-child(even) { background: #f9f9fb; }
+  tbody td { padding: 10px 14px; font-size: 9.5pt; color: var(--ink2); vertical-align: top; }
+  tbody td:first-child { font-weight: 600; color: var(--ink); }
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 8pt;
+    font-weight: 600;
+  }
+  .badge-red   { background: var(--punch-l); color: var(--punch); }
+  .badge-teal  { background: var(--teal-l);  color: var(--teal);  }
+  .badge-amber { background: var(--amber-l); color: var(--amber); }
+
+  /* ── Pillar cards ── */
+  .pillar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+  .pillar-card {
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pillar-card::before {
+    content: attr(data-num);
+    position: absolute;
+    top: -10px; right: 8px;
+    font-size: 72pt;
+    font-weight: 800;
+    opacity: 0.07;
+    color: #000;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .pillar-red    { background: var(--punch-l);  border-left: 4px solid var(--punch); }
+  .pillar-teal   { background: var(--teal-l);   border-left: 4px solid var(--teal); }
+  .pillar-amber  { background: var(--amber-l);  border-left: 4px solid var(--amber); }
+  .pillar-purple { background: var(--purple-l); border-left: 4px solid var(--purple); }
+
+  .pillar-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22pt;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .pillar-red    .pillar-pct { color: var(--punch); }
+  .pillar-teal   .pillar-pct { color: var(--teal); }
+  .pillar-amber  .pillar-pct { color: var(--amber); }
+  .pillar-purple .pillar-pct { color: var(--purple); }
+
+  .pillar-title  { font-size: 11pt; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .pillar-tagline { font-size: 8.5pt; font-style: italic; color: var(--ink3); margin-bottom: 10px; }
+  .pillar-desc { font-size: 9pt; color: var(--ink2); line-height: 1.5; }
+
+  /* ── Post cards ── */
+  .post-card {
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    break-inside: avoid;
+  }
+  .post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--ink);
+    color: #fff;
+  }
+  .post-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    font-weight: 600;
+    color: rgba(255,255,255,0.45);
+  }
+  .post-title { font-size: 10pt; font-weight: 600; flex: 1; }
+  .post-format {
+    font-size: 8pt;
+    background: rgba(255,255,255,0.12);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+  }
+  .post-body { padding: 16px; }
+  .post-pillar-tag {
+    display: inline-block;
+    font-size: 7.5pt;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .tag-red    { background: var(--punch-l); color: var(--punch); }
+  .tag-teal   { background: var(--teal-l);  color: var(--teal); }
+  .tag-amber  { background: var(--amber-l); color: var(--amber); }
+  .tag-purple { background: var(--purple-l);color: var(--purple); }
+
+  .caption-box {
+    background: #f5f5f8;
+    border-left: 3px solid var(--ink);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 14px;
+    font-size: 9.5pt;
+    color: var(--ink2);
+    line-height: 1.65;
+    white-space: pre-wrap;
+    font-style: italic;
+  }
+  .hashtags {
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8pt;
+    color: var(--teal);
+    line-height: 1.7;
+  }
+
+  /* ── Hashtag strategy ── */
+  .tag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .tag-group {
+    background: #f9f9fb;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .tag-group h3 { margin-bottom: 8px; font-size: 8.5pt; }
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .tag-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8pt;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #fff;
+    border: 1px solid var(--rule);
+    color: var(--ink2);
+  }
+  .tag-pill.accent { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  /* ── Schedule ── */
+  .schedule-table thead { background: var(--punch); }
+  .time-slot {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5pt;
+    color: var(--punch);
+    font-weight: 600;
+  }
+
+  .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 16px; }
+  .day-card {
+    border-radius: 6px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .day-name {
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .day-content {
+    font-size: 8pt;
+    line-height: 1.5;
+    color: var(--ink2);
+  }
+  .day-active { background: var(--punch-l); }
+  .day-active .day-name { color: var(--punch); }
+  .day-soft   { background: #f3f3f6; }
+  .day-soft   .day-name { color: var(--ink3); }
+  .day-rest   { background: #fafafa; border: 1px dashed var(--rule); }
+  .day-rest   .day-name { color: var(--ink3); }
+
+  /* ── Quick wins ── */
+  .wins-list { list-style: none; margin-top: 12px; }
+  .wins-list li {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: flex-start;
+  }
+  .wins-list li:last-child { border-bottom: none; }
+  .win-num {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    background: var(--punch);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 9pt;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .win-text { font-size: 10pt; color: var(--ink2); line-height: 1.5; padding-top: 2px; }
+  .win-text strong { color: var(--ink); }
+
+  /* ── Footer ── */
+  .page-footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    font-size: 8pt;
+    color: var(--ink3);
+  }
+  .footer-brand { font-weight: 600; color: var(--ink2); }
+
+  /* ── Callout box ── */
+  .callout {
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin: 16px 0;
+    border-left: 4px solid;
+  }
+  .callout-red   { background: var(--punch-l); border-color: var(--punch); }
+  .callout p { font-size: 10pt; color: var(--ink2); line-height: 1.6; }
+  .callout strong { color: var(--ink); }
+
+  ul.checklist { list-style: none; margin-top: 8px; }
+  ul.checklist li {
+    padding: 5px 0;
+    font-size: 9.5pt;
+    color: var(--ink2);
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  ul.checklist li::before { content: '→'; color: var(--punch); font-weight: 700; flex-shrink: 0; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
+  .stat-row { display: flex; gap: 24px; margin-top: 16px; }
+  .stat-box {
+    flex: 1;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-box .num { font-size: 24pt; font-weight: 800; color: var(--punch); font-family: 'JetBrains Mono', monospace; }
+  .stat-box .lbl { font-size: 8.5pt; color: rgba(255,255,255,0.55); margin-top: 4px; }
+
+  @page {
+    margin: 0;
+    size: A4;
+  }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     COVER
+     ══════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-label">Social Media Content Strategy</div>
+  <div class="cover-title">LITR<br>TRUHLÁŘSTVÍ</div>
+  <div class="cover-sub">Liberec &amp; okolí — zakázková truhlářská výroba</div>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <span class="label">Platformy</span>
+      <span class="val">Instagram · Facebook · TikTok</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label">Obsahové pilíře</span>
+      <span class="val">4 témata</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label">Post nápady</span>
+      <span class="val">10 s českými captions</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label">Rok</span>
+      <span class="val">2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 1 — PLATFORMY + PILÍŘE
+     ══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">Litr Truhlářství · Strategie</span>
+    <span class="section-number">01 / Platformy &amp; Pilíře</span>
+  </div>
+
+  <h1>Kde a&nbsp;o&nbsp;čem.</h1>
+  <p class="intro-text">
+    Česká domácí demografie v Libereckém kraji žije na Instagramu a Facebooku.
+    TikTok funguje jako bonus pro procesní videa a&nbsp;nový dosah.
+    Žádné LinkedIn, žádný Pinterest — soustředit se na dvě platformy a&nbsp;dělat je dobře.
+  </p>
+
+  <h2 style="margin-bottom:12px;">Platforma &amp; priorita</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Platforma</th>
+          <th>Priorita</th>
+          <th>Proč</th>
+          <th>Frekvence</th>
+          <th>Nejlepší formát</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Instagram</td>
+          <td><span class="badge badge-red">Primární</span></td>
+          <td>Vizuální řemeslo, projekty, reels z dílny</td>
+          <td>4× týdně</td>
+          <td>Reels, Carousel, Stories</td>
+        </tr>
+        <tr>
+          <td>Facebook</td>
+          <td><span class="badge badge-red">Primární</span></td>
+          <td>Česká 35–55 demografie, lokální skupiny, sdílení</td>
+          <td>3× týdně</td>
+          <td>Foto, video, skupiny</td>
+        </tr>
+        <tr>
+          <td>TikTok</td>
+          <td><span class="badge badge-teal">Sekundární</span></td>
+          <td>Procesní videa, mladší majitelé domů, organický dosah</td>
+          <td>2–3× týdně</td>
+          <td>Krátká videa 30–90s</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 style="margin-top:36px; margin-bottom:4px;">Obsahové pilíře</h2>
+  <p style="color:var(--ink3); font-size:9.5pt; margin-bottom:0;">Čtyři témata, o kterých Litr mluví pravidelně.</p>
+
+  <div class="pillar-grid">
+    <div class="pillar-card pillar-red" data-num="1">
+      <div class="pillar-pct">35 %</div>
+      <div class="pillar-title">PROCES</div>
+      <div class="pillar-tagline">"Ukaž, jak to vzniká."</div>
+      <div class="pillar-desc">Fotky a videa z dílny — řezání, hoblování, lepení. Žádné sterilní snímky. Piliny na podlaze. Ruce s kalusem. Skutečná práce. Lidé platí za řemeslo — ukaž jim, za co platí.</div>
+    </div>
+    <div class="pillar-card pillar-teal" data-num="2">
+      <div class="pillar-pct">30 %</div>
+      <div class="pillar-title">HOTOVÁ PRÁCE</div>
+      <div class="pillar-tagline">"Práce mluví za sebe. Nech ji mluvit."</div>
+      <div class="pillar-desc">Reveal fotky a videa hotových projektů v zákazníkově prostoru, v přirozeném světle. Before/after, detail spoje, LED postel v noci. Sociální důkaz — takhle vypadá hotová práce Litru.</div>
+    </div>
+    <div class="pillar-card pillar-amber" data-num="3">
+      <div class="pillar-pct">20 %</div>
+      <div class="pillar-title">MATERIÁL A PRAVDA</div>
+      <div class="pillar-tagline">"Vzdělávej bez přednášení."</div>
+      <div class="pillar-desc">Upřímné příspěvky o tom, proč věci stojí, co stojí. Masiv vs. překližka. Proč špatný spoj nevydrží. Anti-bullshit vzdělání. Zákazník, který chápe řemeslo, nesrovnává s IKEou.</div>
+    </div>
+    <div class="pillar-card pillar-purple" data-num="4">
+      <div class="pillar-pct">15 %</div>
+      <div class="pillar-title">DÍLNA A LIDI</div>
+      <div class="pillar-tagline">"Ukáž osobnost, ne korporát."</div>
+      <div class="pillar-desc">Zákulisí. Humor. Názory. Pohled na to, jak funguje dílna. Pondělní realita. Frustrace, které každý řemeslník zná. Lidé nekupují od firem — kupují od lidí.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="footer-brand">Litr Truhlářství</span>
+    <span>Social Media Content Strategy 2026</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 2 — POSTY 1–5
+     ══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">Litr Truhlářství · Strategie</span>
+    <span class="section-number">02 / Post nápady 1–5</span>
+  </div>
+
+  <h1>10 konkrétních postů.</h1>
+  <p class="intro-text">Všechny captions jsou v češtině, v tónu přímém, trochu drsném, sebevědomém. Práce mluví za sebe — text ji doprovází, nepřekřikuje.</p>
+
+  <!-- POST 1 -->
+  <div class="post-card">
+    <div class="post-header">
+      <span class="post-num">#01</span>
+      <span class="post-title">Timelapse postele s LED osvětlením</span>
+      <span class="post-format">Reel 30–60 s</span>
+    </div>
+    <div class="post-body">
+      <span class="post-pillar-tag tag-teal">Hotová práce</span>
+      <div class="caption-box">Tahle postel vznikala 3 týdny.
+
+Masiv, frézovaný spoj, LED pás schovaný tak, aby nešel vidět — jen světlo.
+
+Žádná šroubovací IKEA krabice. Žádný plát dřevotřísky s fólií.
+
+Dřevo, které přežije tvoje děti.
+
+📍 Liberec a okolí | zakázková výroba</div>
+      <div class="hashtags">#truhlářství #postelnámíru #masivnídřevo #liberec #interiér #ložnice #ledosvetleni #zakázkovýnábytek</div>
+    </div>
+  </div>
+
+  <!-- POST 2 -->
+  <div class="post-card">
+    <div class="post-header">
+      <span class="post-num">#02</span>
+      <span class="post-title">Detail spoje — nikdo ho neuvidí</span>
+      <span class="post-format">Fotka (makro)</span>
+    </div>
+    <div class="post-body">
+      <span class="post-pillar-tag tag-red">Proces</span>
+      <div class="caption-box">Tenhle spoj nikdo neuvidí.
+
+Bude za dveřmi skříně, schovaný ve tmě.
+
+Ale my ho tam stejně uděláme pořádně.
+
+Protože víme, co tam je.</div>
+      <div class="hashtags">#truhlář #řemeslo #detailrozhoduje #dřevo #liberec #preciznost</div>
+    </div>
+  </div>
+
+  <!-- POST 3 -->
+  <div class="post-card">
+    <div class="post-header">
+      <span class="post-num">#03</span>
+      <span class="post-title">Before/After: Vestavěná skříň</span>
+      <span class="post-format">Carousel (3 fotky)</span>
+    </div>
+    <div class="post-body">
+      <span class="post-pillar-tag tag-teal">Hotová práce</span>
+      <div class="caption-box">Šedá zeď ve výklenku → vestavěná skříň na míru.
+
+Překližka, posuvné dveře, žádná viditelná úchytka.
+
+Zákazník říkal: "Chci, aby to vypadalo jako součást bytu, ne jako kus nábytku."
+
+To se, myslíme, povedlo.
+
+Kolik metrů máš a co máš na mysli? Napiš nám — uděláme ti předběžnou cenovou představu zdarma.</div>
+      <div class="hashtags">#vestavěnáskříň #posuvnédveře #překližka #nábyteknámíru #libereckýkraj #rekonstrukce #interiér</div>
+    </div>
+  </div>
+
+  <!-- POST 4 -->
+  <div class="post-card">
+    <div class="post-header">
+      <span class="post-num">#04</span>
+      <span class="post-title">Proč dřevo praská — vzdělávací post</span>
+      <span class="post-format">Fotka + text</span>
+    </div>
+    <div class="post-body">
+      <span class="post-pillar-tag tag-amber">Materiál a pravda</span>
+      <div class="caption-box">Zákazník volal, že mu praská postel.
+
+Kupoval jinde. Levněji.
+
+Dřevo nebylo vysušené. Přirozená vlhkost dřeva je ~60 %. Pro nábytek potřebuješ 8–12 %. Rozdíl = praskání, kroucení, rozvazování spojů.
+
+My sušíme. Trvá to. Stojí to. Ale pak to drží.
+
+Tohle je věc, na které se nekompromisuje.</div>
+      <div class="hashtags">#truhlářství #masivnídřevo #sušenídřeva #kvalita #vzdělání #řemeslo</div>
+    </div>
+  </div>
+
+  <!-- POST 5 -->
+  <div class="post-card">
+    <div class="post-header">
+      <span class="post-num">#05</span>
+      <span class="post-title">Dílna v pondělí ráno</span>
+      <span class="post-format">Autentická fotka / krátké video</span>
+    </div>
+    <div class="post-body">
+      <span class="post-pillar-tag tag-purple">Dílna a lidi</span>
+      <div class="caption-box">Pondělí, 7:15.
+
+Káva. Plán na týden. Tři projekty najednou.
+
+Takhle vypadá náš "kancelářský open space".
+
+Voní líp.</div>
+      <div class="hashtags">#dílna #truhlář #liberec #pondělí #ruce #řemesloživí #realita</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="footer-brand">Litr Truhlářství</span>
+    <span>Social Media Content Strategy 2026</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 3 — POSTY 6–10
+     ══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">Litr Truhlářství · Strategie</span>
+    <span class="section-number">03 / Post nápady 6–10</span>
+  </div>
+
+  <!-- POST 6 -->
+  <div class="post-card">
+    <div class="post-header">
+      <span class="post-num">#06</span>
+      <span class="post-title">Pergola se zelenou střechou</span>
+      <span class="post-format">Fotka série (3–5 snímků)</span>
+    </div>
+    <div class="post-body">
+      <span class="post-pillar-tag tag-teal">Hotová práce</span>
+      <div class="caption-box">Pergola, pod kterou se dá sedět i když prší.
+
+Extenzivní zelená střecha: sedum, netřesk — nízká údržba, přirozená izolace.
+
+Smrk s lazurovým nátěrem, zakotvení do betonu.
+
+Tohle není zahradní altán z hobby marketu.
+
+📍 Realizace: Liberecký kraj, 2024</div>
+      <div class="hashtags">#pergola #zelenástřecha #zahradníarchitektura #drevostavba #liberec #terasa #záhrada #truhlářství</div>
+    </div>
+  </div>
+
+  <!-- POST 7 -->
+  <div class="post-card">
+    <div class="post-header">
+      <span class="post-num">#07</span>
+      <span class="post-title">Barový pult — detail povrchu</span>
+      <span class="post-format">Makro fotka + popis</span>
+    </div>
+    <div class="post-body">
+      <span class="post-pillar-tag tag-red">Proces + Hotová práce</span>
+      <div class="caption-box">Barový pult.
+
+Dubová deska, tvrdý olej, zaoblené hrany přesně tam, kde lokty tráví čas.
+
+Zákazník provozuje vinný bar v Liberci. Chtěl pult, který "vypadá jako by tam byl vždycky".
+
+Tři roky tam bude. Pak nás zavolá, protože bude chtít druhý.</div>
+      <div class="hashtags">#barovýpult #restaurace #dub #truhlář #interiér #liberec #pohostinství #nábyteknámíru</div>
+    </div>
+  </div>
+
+  <!-- POST 8 -->
+  <div class="post-card">
+    <div class="post-header">
+      <span class="post-num">#08</span>
+      <span class="post-title">Proč nejsme levní — upřímný příspěvek</span>
+      <span class="post-format">Textový post / jednoduché pozadí</span>
+    </div>
+    <div class="post-body">
+      <span class="post-pillar-tag tag-amber">Materiál a pravda</span>
+      <div class="caption-box">Dostáváme maily: "Dost drahé, v IKEe to mám za třetinu."
+
+Pravda.
+
+V IKEe to taky za 7 let vyhodíš a koupíš znova.
+
+My děláme věci, které se dědí. Nebo aspoň přestěhují do dalšího bytu. A do dalšího.
+
+Nejsme drahý. Jsme dražší jednou.</div>
+      <div class="hashtags">#kvalitanadvakrát #truhlář #zakázkovýnábytek #řemeslo #liberec</div>
+    </div>
+  </div>
+
+  <!-- POST 9 -->
+  <div class="post-card">
+    <div class="post-header">
+      <span class="post-num">#09</span>
+      <span class="post-title">Kuchyň: Reveal video</span>
+      <span class="post-format">Reel — procházení prostorem</span>
+    </div>
+    <div class="post-body">
+      <span class="post-pillar-tag tag-teal">Hotová práce</span>
+      <div class="caption-box">Kuchyň, kde nic nevyčuhuje.
+
+Žádné viditelné úchytky. Integrované spotřebiče. Šuplíky, které jdou všechny.
+
+Projekt: 6 týdnů výroby, 3 dny montáž.
+
+Jestli plánuješ rekonstrukci kuchyně v Libereckém kraji — ozvi se. Přijdeme se podívat, odmíříme, poradíme.</div>
+      <div class="hashtags">#kuchyněnámíru #kuchyň #interiér #rekonstrukce #liberec #truhlář #bezúchytek</div>
+    </div>
+  </div>
+
+  <!-- POST 10 -->
+  <div class="post-card">
+    <div class="post-header">
+      <span class="post-num">#10</span>
+      <span class="post-title">Zákazníkův příběh — citát</span>
+      <span class="post-format">Fotka prostoru + citát</span>
+    </div>
+    <div class="post-body">
+      <span class="post-pillar-tag tag-purple">Dílna a lidi</span>
+      <div class="caption-box">Petr nám napsal 8 měsíců po dokončení:
+
+"Každý návštěvník se hned ptá, kde jsem vzal postel. Říkám jim: od Litru v Liberci. Nic víc."
+
+To je pro nás víc než recenze na Googlu.
+
+Díky, Petře.</div>
+      <div class="hashtags">#zákazník #truhlář #liberec #postel #masiv #řemeslo #spokojený</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="footer-brand">Litr Truhlářství</span>
+    <span>Social Media Content Strategy 2026</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 4 — HASHTAGOVÁ STRATEGIE + SCHEDULE
+     ══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">Litr Truhlářství · Strategie</span>
+    <span class="section-number">04 / Hashtagy &amp; Plán zveřejňování</span>
+  </div>
+
+  <h1>Hashtagová strategie.</h1>
+  <p class="intro-text" style="margin-bottom:20px;">
+    Na každý příspěvek 12–18 hashtagů. Kombinace: velký dosah + střední relevance + přesná lokalita.
+    Žádné anglické obecné tagy (#woodworking) — špatné publikum pro českou firmu.
+  </p>
+
+  <div class="tag-grid">
+    <div class="tag-group">
+      <h3 style="color:var(--punch);">Obor a řemeslo</h3>
+      <div class="tag-list">
+        <span class="tag-pill">#truhlářství</span>
+        <span class="tag-pill">#truhlar</span>
+        <span class="tag-pill">#truhlář</span>
+        <span class="tag-pill">#řemeslo</span>
+        <span class="tag-pill">#ruční práce</span>
+        <span class="tag-pill">#řemesloživí</span>
+      </div>
+    </div>
+    <div class="tag-group">
+      <h3 style="color:var(--teal);">Produkt a zakázka</h3>
+      <div class="tag-list">
+        <span class="tag-pill">#nábyteknámíru</span>
+        <span class="tag-pill">#zakázkovýnábytek</span>
+        <span class="tag-pill">#vestavěnáskříň</span>
+        <span class="tag-pill">#kuchyněnámíru</span>
+        <span class="tag-pill">#postel</span>
+        <span class="tag-pill">#pergola</span>
+      </div>
+    </div>
+    <div class="tag-group">
+      <h3 style="color:var(--amber);">Materiál</h3>
+      <div class="tag-list">
+        <span class="tag-pill">#masivnídřevo</span>
+        <span class="tag-pill">#dřevo</span>
+        <span class="tag-pill">#dub</span>
+        <span class="tag-pill">#smrk</span>
+        <span class="tag-pill">#překližka</span>
+        <span class="tag-pill">#drevo</span>
+      </div>
+    </div>
+    <div class="tag-group">
+      <h3 style="color:var(--purple);">Lokalita (přesné zacílení)</h3>
+      <div class="tag-list">
+        <span class="tag-pill accent">#liberec</span>
+        <span class="tag-pill accent">#libereckýkraj</span>
+        <span class="tag-pill accent">#liberecko</span>
+        <span class="tag-pill accent">#severnicechy</span>
+        <span class="tag-pill">#českarepublika</span>
+      </div>
+    </div>
+    <div class="tag-group">
+      <h3 style="color:var(--ink2);">Interiér a bydlení</h3>
+      <div class="tag-list">
+        <span class="tag-pill">#interiér</span>
+        <span class="tag-pill">#bydlení</span>
+        <span class="tag-pill">#rekonstrukce</span>
+        <span class="tag-pill">#domov</span>
+        <span class="tag-pill">#interier</span>
+      </div>
+    </div>
+    <div class="tag-group">
+      <h3 style="color:var(--ink2);">Brand tag (vždy přidat)</h3>
+      <div class="tag-list">
+        <span class="tag-pill accent">#litrtruhlářství</span>
+        <span class="tag-pill accent">#litrtruhlarstvi</span>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:40px; margin-bottom:8px;">Týdenní plán zveřejňování</h2>
+  <p style="color:var(--ink3); font-size:9pt; margin-bottom:16px;">Minimální varianta: 4 příspěvky týdně. Optimální: 6–7 příspěvků + stories.</p>
+
+  <div class="week-grid">
+    <div class="day-card day-active">
+      <div class="day-name">Po</div>
+      <div class="day-content">Zákulisí<br>dílny<br><em style="font-size:7.5pt;">Story nebo post</em></div>
+    </div>
+    <div class="day-card day-active">
+      <div class="day-name">Út</div>
+      <div class="day-content">Procesní<br>fotka<br><em style="font-size:7.5pt;">Reel / foto</em></div>
+    </div>
+    <div class="day-card day-soft">
+      <div class="day-name">St</div>
+      <div class="day-content">Vzdělávací<br>příspěvek<br><em style="font-size:7.5pt;">Text/carousel</em></div>
+    </div>
+    <div class="day-card day-active">
+      <div class="day-name">Čt</div>
+      <div class="day-content">Hotový<br>projekt<br><em style="font-size:7.5pt;">Reveal / B&A</em></div>
+    </div>
+    <div class="day-card day-soft">
+      <div class="day-name">Pá</div>
+      <div class="day-content">Humor<br>nebo názor<br><em style="font-size:7.5pt;">Post / story</em></div>
+    </div>
+    <div class="day-card day-active">
+      <div class="day-name">So</div>
+      <div class="day-content">Nejlepší<br>vizuál týdne<br><em style="font-size:7.5pt;">Reel / carousel</em></div>
+    </div>
+    <div class="day-card day-rest">
+      <div class="day-name">Ne</div>
+      <div class="day-content" style="color:var(--ink3);">Pauza nebo<br>re-share</div>
+    </div>
+  </div>
+
+  <div class="stat-row" style="margin-top:24px;">
+    <div class="stat-box">
+      <div class="num">19–21</div>
+      <div class="lbl">Nejlepší čas Út/Čt (hod.)</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">10–12</div>
+      <div class="lbl">Nejlepší čas So (hod.)</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">18–20</div>
+      <div class="lbl">Facebook — pondělí (hod.)</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">3 měs.</div>
+      <div class="lbl">Do prvních přímých poptávek z IG</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="footer-brand">Litr Truhlářství</span>
+    <span>Social Media Content Strategy 2026</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 5 — QUICK WINS + ZÁVĚR
+     ══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand">Litr Truhlářství · Strategie</span>
+    <span class="section-number">05 / Quick Wins &amp; Závěr</span>
+  </div>
+
+  <h1>Prvních 30 dní.</h1>
+  <p class="intro-text">Co udělat hned — bez agentury, bez velkého rozpočtu, jen s telefonem a dílnou.</p>
+
+  <ul class="wins-list">
+    <li>
+      <div class="win-num">1</div>
+      <div class="win-text"><strong>Nafot 10 hotových projektů.</strong> To je základní obsah na celý první měsíc. Přirozené světlo, žádný filtr. Dílna, zákazníkův prostor, detail.</div>
+    </li>
+    <li>
+      <div class="win-num">2</div>
+      <div class="win-text"><strong>Natoč 3 procesní reely.</strong> Jak vzniká jeden kus — od kusu dřeva k hotovému produktu. Timelapse nebo střih. 30–60 sekund.</div>
+    </li>
+    <li>
+      <div class="win-num">3</div>
+      <div class="win-text"><strong>Nastav bio profilu.</strong> Instagram: <em>"Zakázková truhlářská výroba. Liberec a okolí. Masiv, překližka, žádná dřevotříska."</em> + kontakt nebo odkaz na DM.</div>
+    </li>
+    <li>
+      <div class="win-num">4</div>
+      <div class="win-text"><strong>Vytvoř Instagram Highlights.</strong> Čtyři složky: Projekty / Postele / Kuchyně / Pergoly. Zákazník vidí portfolio hned.</div>
+    </li>
+    <li>
+      <div class="win-num">5</div>
+      <div class="win-text"><strong>Přidej se do lokálních FB skupin.</strong> Liberec — koupím/prodám/sháním · Rekonstrukce a bydlení Liberec · Liberecký kraj — domov a zahrada. Sdílej tam dokončené projekty.</div>
+    </li>
+    <li>
+      <div class="win-num">6</div>
+      <div class="win-text"><strong>Odpovídej na každý komentář.</strong> Algoritmus i zákazníci to ocení. I jednoduchá odpověď ("Díky, dalo nám to 3 týdny 🪚") buduje vztah.</div>
+    </li>
+  </ul>
+
+  <div class="callout callout-red" style="margin-top:32px;">
+    <p><strong>Výsledek za 3 měsíce konzistentní práce:</strong> Lokální awareness v Libereckém kraji, přímé poptávky z DM, zákazníci kteří přijdou s referencí "viděl jsem vás na Instagramu" — a hlavně lidé, kteří přijdou s tím, že chtějí přesně to, co Litr dělá. Žádné smlouvání o ceně, žádné srovnání s IKEou.</p>
+  </div>
+
+  <div style="margin-top:40px; padding-top:24px; border-top:2px solid var(--ink);">
+    <h2 style="margin-bottom:12px;">Shrnutí strategie</h2>
+    <div class="two-col">
+      <div>
+        <h3 style="margin-bottom:8px; color:var(--punch);">Dělej</h3>
+        <ul class="checklist">
+          <li>Fotografuj všechny projekty — i ty "normální"</li>
+          <li>Ukazuj proces, ne jen výsledek</li>
+          <li>Piš jak mluvíš — přímě, bez corpu</li>
+          <li>Používej lokální hashtagy vždy</li>
+          <li>Odpovídej na DM do 24 hodin</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-bottom:8px; color:var(--ink3);">Nedělej</h3>
+        <ul class="checklist">
+          <li>Anglické obecné hashtagy (#woodworking)</li>
+          <li>Příspěvky bez fotky nebo videa</li>
+          <li>Srovnávat se s IKEou jmenovitě</li>
+          <li>Postovat nepravidelně — pauza = ztráta dosahu</li>
+          <li>Ignorovat komentáře a mentions</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="footer-brand">Litr Truhlářství</span>
+    <span>Social Media Content Strategy 2026</span>
+  </div>
+</div>
+
+</body>
+</html>

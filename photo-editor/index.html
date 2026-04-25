@@ -215,6 +215,22 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.25)}
 .spin{width:18px;height:18px;border:2px solid #262626;border-top-color:var(--accent);border-radius:50%;animation:spin .65s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #spin-label{font-size:10px;color:var(--text-dim);letter-spacing:.1em}
+
+/* GIF section */
+.gif-sep{height:1px;background:var(--border);margin:2px 0 6px}
+.gif-title{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:5px}
+.gif-opts{display:flex;gap:5px;margin-bottom:5px}
+.gif-opts select{
+  flex:1;padding:6px 5px;background:var(--panel2);
+  border:1px solid var(--border2);border-radius:5px;
+  color:var(--text);font-size:10px;font-family:inherit;
+  outline:none;cursor:pointer;
+}
+/* Progress bar */
+#gif-progress{
+  display:none;height:2px;background:var(--border2);border-radius:1px;margin-top:4px;overflow:hidden;
+}
+#gif-progress-bar{height:100%;width:0%;background:var(--accent);transition:width .1s;border-radius:1px}
 </style>
 </head>
 <body>
@@ -381,6 +397,23 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.25)}
       </select>
     </div>
     <button class="btn btn-secondary" id="btn-png">Save PNG</button>
+    <div class="gif-sep"></div>
+    <div class="gif-title">Animated GIF</div>
+    <div class="gif-opts">
+      <div style="flex:1;display:flex;align-items:center;gap:5px;min-width:0">
+        <span style="font-size:10px;color:var(--text-dim);white-space:nowrap;flex-shrink:0">Frames</span>
+        <input type="number" id="gif-frames" min="1" max="60" value="6"
+          style="flex:1;min-width:0;padding:5px 6px;background:var(--panel2);border:1px solid var(--border2);
+                 border-radius:5px;color:var(--text);font-size:11px;font-family:inherit;outline:none;width:100%">
+      </div>
+      <select id="gif-speed">
+        <option value="180">Slow</option>
+        <option value="100" selected>Medium</option>
+        <option value="50">Fast</option>
+      </select>
+    </div>
+    <button class="btn btn-secondary" id="btn-gif">Export GIF</button>
+    <div id="gif-progress"><div id="gif-progress-bar"></div></div>
   </div>
 </aside>
 
@@ -411,6 +444,7 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.25)}
 
   <div id="bottom-bar">
     <span class="info" id="img-info"></span>
+    <span id="live-badge" style="display:none;font-size:9px;color:var(--accent);letter-spacing:.12em;font-weight:600">● LIVE</span>
     <button class="bb-btn" id="bb-ba">Before / After</button>
   </div>
 </main>
@@ -441,8 +475,9 @@ const $drop   = document.getElementById('dropzone');
 const $bar    = document.getElementById('bottom-bar');
 const $info   = document.getElementById('img-info');
 const $spin   = document.getElementById('spinner');
-const $bbBA   = document.getElementById('bb-ba');
-const $btnBA  = document.getElementById('btn-ba');
+const $bbBA      = document.getElementById('bb-ba');
+const $btnBA     = document.getElementById('btn-ba');
+const $liveBadge = document.getElementById('live-badge');
 
 // ─────────────────────────────────────────────────────────────
 // UTILS
@@ -528,9 +563,14 @@ function loadImg(img) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// RENDER
+// RENDER + ANIMATED PREVIEW
 // ─────────────────────────────────────────────────────────────
-let _rtimer = null;
+let _rtimer     = null;
+let _prevFrames = [];   // cached ImageData frames for preview loop
+let _prevIdx    = 0;
+let _prevTimer  = null; // setInterval handle
+let _prevGenId  = 0;    // incremented on each new build to cancel stale ones
+
 function scheduleRender() {
   if (!S.src) return;
   if (_rtimer) clearTimeout(_rtimer);
@@ -540,30 +580,82 @@ function scheduleRender() {
 function render() {
   _rtimer = null;
   if (!S.src) return;
+
   if (S.showOrig) {
+    stopPreview();
     $ctx.putImageData(new ImageData(new Uint8ClampedArray(S.src), S.W, S.H), 0, 0);
     return;
   }
-  $spin.style.display = 'flex';
-  requestAnimationFrame(() => {
-    const W = S.W, H = S.H;
-    let px = new Uint8ClampedArray(S.src);
 
-    // 1. Light adjustments
-    fxLight(px, W, H, S.light);
+  if (S.grain.on || S.glitch.on) {
+    // Animated mode — build frames asynchronously
+    stopPreview();
+    $spin.style.display = 'flex';
+    buildPreview(); // async, intentionally not awaited
+  } else {
+    // Static mode
+    stopPreview();
+    $spin.style.display = 'flex';
+    requestAnimationFrame(() => {
+      let px = new Uint8ClampedArray(S.src);
+      fxLight(px, S.W, S.H, S.light);
+      $ctx.putImageData(new ImageData(px, S.W, S.H), 0, 0);
+      $spin.style.display = 'none';
+    });
+  }
+}
 
-    // 2. Film grain
-    if (S.grain.on) {
-      S.grainSeed = (S.grainSeed * 1664525 + 1013904223) & 0x7FFFFFFF;
-      fxGrain(px, W, H, S.grain.amt / 100, S.grain.size / 100, S.grain.type, S.grainSeed);
+async function buildPreview() {
+  const genId = ++_prevGenId;
+  _prevFrames = []; _prevIdx = 0;
+
+  const W = S.W, H = S.H;
+  // Preview uses at most 8 frames regardless of gif-frames setting
+  const n = Math.min(Math.max(1, parseInt(document.getElementById('gif-frames').value)), 8);
+  const seedBase = (Math.random() * 0x7FFFFFFF) | 0;
+
+  // Pre-apply light to a base buffer (shared across all frames)
+  const base = new Uint8ClampedArray(S.src);
+  fxLight(base, W, H, S.light);
+
+  for (let f = 0; f < n; f++) {
+    if (genId !== _prevGenId) return; // newer render started, abort
+
+    let px = new Uint8ClampedArray(base);
+    const seed = seedBase + f * 7919;
+
+    if (S.grain.on)
+      fxGrain(px, W, H, S.grain.amt/100, S.grain.size/100, S.grain.type, seed);
+    if (S.glitch.on)
+      px = fxGlitch(px, W, H, S.glitch.amt/100, S.glitch.scan/100, S.glitch.chroma/100, seed ^ 0xDEAD);
+
+    _prevFrames.push(new ImageData(new Uint8ClampedArray(px), W, H));
+
+    if (f === 0) {
+      // Show first frame immediately, hide spinner, start loop
+      $ctx.putImageData(_prevFrames[0], 0, 0);
+      $spin.style.display = 'none';
+      startPreviewLoop();
     }
 
-    // 3. Glitch
-    if (S.glitch.on) px = fxGlitch(px, W, H, S.glitch.amt / 100, S.glitch.scan / 100, S.glitch.chroma / 100);
+    await new Promise(r => setTimeout(r, 0)); // yield so browser stays responsive
+  }
+}
 
-    $ctx.putImageData(new ImageData(px, W, H), 0, 0);
-    $spin.style.display = 'none';
-  });
+function startPreviewLoop() {
+  stopPreview();
+  const delay = parseInt(document.getElementById('gif-speed').value);
+  _prevTimer = setInterval(() => {
+    if (_prevFrames.length < 2) return;
+    _prevIdx = (_prevIdx + 1) % _prevFrames.length;
+    $ctx.putImageData(_prevFrames[_prevIdx], 0, 0);
+  }, delay);
+  $liveBadge.style.display = 'inline';
+}
+
+function stopPreview() {
+  if (_prevTimer) { clearInterval(_prevTimer); _prevTimer = null; }
+  $liveBadge.style.display = 'none';
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -700,9 +792,9 @@ function fxGrain(d, W, H, amt, sizeT, type, seed) {
 // ─────────────────────────────────────────────────────────────
 // EFFECT: GLITCH
 // ─────────────────────────────────────────────────────────────
-function fxGlitch(src, W, H, amt, scanT, chromaT) {
+function fxGlitch(src, W, H, amt, scanT, chromaT, seed = (Date.now() * 137) | 0) {
   const dst = new Uint8ClampedArray(src);
-  const rng = mulberry32((Date.now() * 137) | 0);
+  const rng = mulberry32(seed);
 
   // Chromatic aberration – R shifts right, B shifts left
   const shift = Math.round(chromaT * amt * 30);
@@ -786,6 +878,211 @@ function fxGlitch(src, W, H, amt, scanT, chromaT) {
   }
 
   return dst;
+}
+
+// ─────────────────────────────────────────────────────────────
+// GIF ENCODER
+// ─────────────────────────────────────────────────────────────
+
+// Build 256-color palette via histogram (5-bit/channel buckets)
+// and a 32³ nearest-color LUT for fast per-pixel mapping.
+function gifBuildPalette(px, W, H) {
+  // Count (r>>3, g>>3, b>>3) buckets from sampled pixels
+  const hist = new Uint32Array(32 * 32 * 32);
+  const step = 4; // sample every 4th pixel in each axis
+  for (let y = 0; y < H; y += step)
+    for (let x = 0; x < W; x += step) {
+      const i = (y * W + x) * 4;
+      hist[((px[i] >> 3) << 10) | ((px[i+1] >> 3) << 5) | (px[i+2] >> 3)]++;
+    }
+
+  // Sort buckets by frequency, pick top 256
+  const entries = [];
+  for (let k = 0; k < hist.length; k++) if (hist[k]) entries.push(k);
+  entries.sort((a, b) => hist[b] - hist[a]);
+  const n = Math.min(256, entries.length);
+
+  const pal = new Uint8Array(768); // 256 * 3, zero-padded
+  for (let i = 0; i < n; i++) {
+    const k = entries[i];
+    pal[i*3]   = ((k >> 10) & 31) * 8 + 4;
+    pal[i*3+1] = ((k >>  5) & 31) * 8 + 4;
+    pal[i*3+2] = ( k        & 31) * 8 + 4;
+  }
+
+  // Build 32³ LUT: each entry = nearest palette index
+  const lut = new Uint8Array(32 * 32 * 32);
+  for (let ri = 0; ri < 32; ri++) {
+    for (let gi = 0; gi < 32; gi++) {
+      for (let bi = 0; bi < 32; bi++) {
+        const r = ri*8+4, g = gi*8+4, b = bi*8+4;
+        let best = 0, bestD = Infinity;
+        for (let j = 0; j < n; j++) {
+          const dr=r-pal[j*3], dg=g-pal[j*3+1], db=b-pal[j*3+2];
+          const d = dr*dr + dg*dg + db*db;
+          if (d < bestD) { bestD = d; best = j; }
+        }
+        lut[(ri<<10)|(gi<<5)|bi] = best;
+      }
+    }
+  }
+  return { pal, lut };
+}
+
+// Map RGBA pixel array → palette index array using LUT
+function gifMapPixels(px, W, H, lut) {
+  const idx = new Uint8Array(W * H);
+  for (let i = 0, j = 0; i < px.length; i += 4, j++)
+    idx[j] = lut[((px[i]>>3)<<10)|((px[i+1]>>3)<<5)|(px[i+2]>>3)];
+  return idx;
+}
+
+// LZW encode indexed pixel array (minCodeSize = 8 for 256-color GIF)
+function gifLZW(indices) {
+  const clear = 256, eoi = 257;
+  const out = []; let buf = 0, bufLen = 0, codeSize = 9, nextCode = 258;
+  const dict = new Map();
+
+  const emit = c => {
+    buf |= c << bufLen; bufLen += codeSize;
+    while (bufLen >= 8) { out.push(buf & 0xFF); buf >>>= 8; bufLen -= 8; }
+  };
+  const reset = () => { dict.clear(); codeSize = 9; nextCode = 258; };
+
+  reset(); emit(clear);
+  let code = indices[0];
+  for (let i = 1; i < indices.length; i++) {
+    const k = (code << 8) | indices[i];
+    const nc = dict.get(k);
+    if (nc !== undefined) {
+      code = nc;
+    } else {
+      emit(code);
+      if (nextCode < 4096) {
+        dict.set(k, nextCode++);
+        if (nextCode > (1 << codeSize)) codeSize = Math.min(12, codeSize + 1);
+      } else { emit(clear); reset(); }
+      code = indices[i];
+    }
+  }
+  emit(code); emit(eoi);
+  if (bufLen > 0) out.push(buf & 0xFF);
+  return out;
+}
+
+// Assemble GIF89a binary
+function gifBuild(frames, pal, W, H, delayCs) {
+  const b = [];
+  const w8 = (...a) => a.forEach(v => b.push(v & 0xFF));
+  const w16 = v => { b.push(v & 0xFF); b.push((v >> 8) & 0xFF); };
+  const str = s => { for (const c of s) b.push(c.charCodeAt(0)); };
+
+  // Header + Logical Screen Descriptor
+  str('GIF89a'); w16(W); w16(H);
+  b.push(0xF7, 0, 0); // GCT present, 8-bit color, bg=0, aspect=0
+
+  // Global Color Table (768 bytes, already padded to 256 entries)
+  for (let i = 0; i < 768; i++) b.push(pal[i]);
+
+  // Netscape loop extension (infinite)
+  str('\x21\xFF\x0B'); str('NETSCAPE2.0');
+  b.push(3, 1, 0, 0, 0); // 3 bytes, sub-block id=1, loop count=0 (infinite)
+
+  for (const indexed of frames) {
+    // Graphic Control Extension
+    b.push(0x21, 0xF9, 4, 0); w16(delayCs); b.push(0, 0);
+    // Image Descriptor
+    b.push(0x2C); w16(0); w16(0); w16(W); w16(H); b.push(0);
+    // Image Data
+    b.push(8); // LZW min code size
+    const lzw = gifLZW(indexed);
+    for (let i = 0; i < lzw.length; ) {
+      const len = Math.min(255, lzw.length - i);
+      b.push(len);
+      for (let j = 0; j < len; j++) b.push(lzw[i + j]);
+      i += len;
+    }
+    b.push(0); // block terminator
+  }
+
+  b.push(0x3B); // GIF trailer
+  return new Uint8Array(b);
+}
+
+// Orchestrate: render N frames, encode, download
+async function exportGIF() {
+  if (!S.src) { alert('No image loaded.'); return; }
+  if (!S.grain.on && !S.glitch.on) {
+    alert('Enable Film Grain or Glitch for animation — otherwise all frames are identical.'); return;
+  }
+
+  const numFrames = parseInt(document.getElementById('gif-frames').value);
+  const delayMs   = parseInt(document.getElementById('gif-speed').value);
+  const delayCs   = Math.round(delayMs / 10);
+
+  // GIF output capped at 800px longest side
+  const maxDim = 800;
+  const scale  = Math.min(1, maxDim / Math.max(S.W, S.H));
+  const gW     = Math.round(S.W * scale);
+  const gH     = Math.round(S.H * scale);
+
+  // UI: busy state
+  const $btn = document.getElementById('btn-gif');
+  const $prog = document.getElementById('gif-progress');
+  const $bar  = document.getElementById('gif-progress-bar');
+  $btn.disabled = true; $btn.textContent = 'Encoding…';
+  $prog.style.display = 'block'; $bar.style.width = '0%';
+
+  // Render base (light only) at full size, then scale down for GIF
+  const basePx = new Uint8ClampedArray(S.src);
+  fxLight(basePx, S.W, S.H, S.light);
+
+  const tmpC = document.createElement('canvas');
+  tmpC.width = S.W; tmpC.height = S.H;
+  tmpC.getContext('2d').putImageData(new ImageData(basePx, S.W, S.H), 0, 0);
+
+  const gifC = document.createElement('canvas');
+  gifC.width = gW; gifC.height = gH;
+  const gifCtx = gifC.getContext('2d', { willReadFrequently: true });
+  gifCtx.drawImage(tmpC, 0, 0, gW, gH);
+  const baseGif = gifCtx.getImageData(0, 0, gW, gH).data;
+
+  // Build palette from base
+  const { pal, lut } = gifBuildPalette(baseGif, gW, gH);
+
+  // Generate frames
+  const frames = [];
+  const seedBase = (Math.random() * 0xFFFF | 0) * 1000;
+
+  for (let f = 0; f < numFrames; f++) {
+    let px = new Uint8ClampedArray(baseGif);
+    const frameSeed = seedBase + f * 7919;
+
+    if (S.grain.on)
+      fxGrain(px, gW, gH, S.grain.amt/100, S.grain.size/100, S.grain.type, frameSeed);
+
+    if (S.glitch.on)
+      px = fxGlitch(px, gW, gH, S.glitch.amt/100, S.glitch.scan/100, S.glitch.chroma/100, frameSeed ^ 0xDEAD);
+
+    frames.push(gifMapPixels(px, gW, gH, lut));
+    $bar.style.width = Math.round((f + 1) / numFrames * 85) + '%';
+    await new Promise(r => setTimeout(r, 0)); // yield for UI update
+  }
+
+  // Encode + download
+  const gif  = gifBuild(frames, pal, gW, gH, delayCs);
+  $bar.style.width = '100%';
+  await new Promise(r => setTimeout(r, 60));
+
+  const url = URL.createObjectURL(new Blob([gif], { type: 'image/gif' }));
+  Object.assign(document.createElement('a'), {
+    download: `frame_${Date.now()}.gif`, href: url
+  }).click();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+
+  // Restore UI
+  $btn.disabled = false; $btn.textContent = 'Export GIF';
+  setTimeout(() => { $prog.style.display = 'none'; $bar.style.width = '0%'; }, 800);
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -896,7 +1193,13 @@ function syncBA(on) {
     b.classList.toggle('active', on);
     b.textContent = on ? 'Showing Original' : 'Before / After';
   });
+  if (on) stopPreview();
 }
+
+// Restart preview loop when speed changes (so playback rate updates immediately)
+document.getElementById('gif-speed').addEventListener('change', () => {
+  if (_prevTimer) startPreviewLoop();
+});
 function toggleBA() { syncBA(!S.showOrig); render(); }
 $btnBA.onclick = toggleBA;
 $bbBA.onclick  = toggleBA;
@@ -915,6 +1218,7 @@ document.addEventListener('keyup', e => {
 // RESET
 // ─────────────────────────────────────────────────────────────
 document.getElementById('btn-reset').onclick = () => {
+  stopPreview();
   S.light  = { temp:0, tint:0, exp:0, con:0, hi:0, sh:0, wh:0, bl:0, vib:0, sat:0 };
   S.grain  = { on:false, amt:40, size:30, type:'fine' };
   S.glitch = { on:false, amt:50, scan:30, chroma:60 };
@@ -956,6 +1260,7 @@ function dl(mime, quality, ext) {
 }
 document.getElementById('btn-jpg').onclick = () => dl('image/jpeg', parseFloat(document.getElementById('jpg-q').value), 'jpg');
 document.getElementById('btn-png').onclick = () => dl('image/png', 1, 'png');
+document.getElementById('btn-gif').onclick = () => exportGIF();
 </script>
 </body>
 </html>
