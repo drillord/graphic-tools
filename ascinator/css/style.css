@@ -11,6 +11,7 @@
   --accent:        #ffffff;
   --sidebar-w:     300px;
   --radius:        4px;
+  --thumb-border:  #444444;
 }
 
 /* ─── Reset / Base ──────────────────────────────────────────────────────── */
@@ -392,7 +393,7 @@ input[type="range"].slider::-webkit-slider-thumb {
   height: 14px;
   border-radius: 50%;
   background: #ffffff;
-  border: 2px solid #444444;
+  border: 2px solid var(--thumb-border);
   box-shadow: 0 0 0 1px #000000, 0 1px 3px rgba(0, 0, 0, 0.8);
   cursor: pointer;
   transition: transform 0.1s;
@@ -407,7 +408,7 @@ input[type="range"].slider::-moz-range-thumb {
   height: 14px;
   border-radius: 50%;
   background: #ffffff;
-  border: none;
+  border: 2px solid var(--thumb-border);
   box-shadow: 0 0 0 1px #000000, 0 1px 3px rgba(0, 0, 0, 0.8);
   cursor: pointer;
   transition: transform 0.1s;
@@ -571,7 +572,7 @@ input[type="range"].slider::-moz-range-thumb:hover {
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  color: #2a2a2a;
+  color: var(--panel-border);
 }
 
 #canvas-placeholder p {

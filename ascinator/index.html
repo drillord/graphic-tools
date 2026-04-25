@@ -17,19 +17,19 @@
 
         <!-- 1. Mode tabs -->
         <div class="mode-tabs">
-          <button class="tab-btn active" data-mode="image">Image</button>
-          <button class="tab-btn" data-mode="video">Video</button>
+          <button type="button" class="tab-btn active" data-mode="image">Image</button>
+          <button type="button" class="tab-btn" data-mode="video">Video</button>
         </div>
 
         <!-- 2. Action row -->
         <div class="action-row">
-          <button class="btn-action" id="btn-upload">
+          <button type="button" class="btn-action" id="btn-upload">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6.5 1v7M3.5 4L6.5 1l3 3M1.5 10v1.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V10" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             Upload Image
           </button>
-          <button class="btn-action" id="btn-export">
+          <button type="button" class="btn-action" id="btn-export">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6.5 9V2M3.5 6l3 3 3-3M1.5 10v1.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V10" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -47,15 +47,15 @@
             Character Sequence
           </div>
           <div class="btn-grid btn-grid-3">
-            <button class="seg-btn active" data-seq="standard">Standard</button>
-            <button class="seg-btn" data-seq="blocks">Blocks</button>
-            <button class="seg-btn" data-seq="simple">Simple</button>
-            <button class="seg-btn" data-seq="binary">Binary</button>
-            <button class="seg-btn" data-seq="dense">Dense</button>
-            <button class="seg-btn" data-seq="minimal">Minimal</button>
-            <button class="seg-btn" data-seq="retro">Retro</button>
-            <button class="seg-btn" data-seq="symbols">Symbols</button>
-            <button class="seg-btn" data-seq="custom">Custom</button>
+            <button type="button" class="seg-btn active" data-seq="standard">Standard</button>
+            <button type="button" class="seg-btn" data-seq="blocks">Blocks</button>
+            <button type="button" class="seg-btn" data-seq="simple">Simple</button>
+            <button type="button" class="seg-btn" data-seq="binary">Binary</button>
+            <button type="button" class="seg-btn" data-seq="dense">Dense</button>
+            <button type="button" class="seg-btn" data-seq="minimal">Minimal</button>
+            <button type="button" class="seg-btn" data-seq="retro">Retro</button>
+            <button type="button" class="seg-btn" data-seq="symbols">Symbols</button>
+            <button type="button" class="seg-btn" data-seq="custom">Custom</button>
           </div>
           <input type="text" id="custom-seq" class="custom-seq-input" placeholder="Enter characters…">
         </div>
@@ -69,13 +69,13 @@
             Font Family
           </div>
           <div class="btn-grid btn-grid-2">
-            <button class="seg-btn active" data-font="monospace">Monospace</button>
-            <button class="seg-btn" data-font="courier">Courier New</button>
-            <button class="seg-btn" data-font="consolas">Consolas</button>
-            <button class="seg-btn" data-font="ibm">IBM Plex Mono</button>
+            <button type="button" class="seg-btn active" data-font="monospace">Monospace</button>
+            <button type="button" class="seg-btn" data-font="courier">Courier New</button>
+            <button type="button" class="seg-btn" data-font="consolas">Consolas</button>
+            <button type="button" class="seg-btn" data-font="ibm">IBM Plex Mono</button>
           </div>
           <div class="font-upload-row">
-            <button class="btn-secondary" id="btn-font-upload">Upload Font</button>
+            <button type="button" class="btn-secondary" id="btn-font-upload">Upload Font</button>
             <input type="file" id="font-file" accept=".ttf,.otf,.woff,.woff2" hidden>
             <span class="font-name" id="font-name-label">No font loaded</span>
           </div>
@@ -101,7 +101,7 @@
             </div>
             <span class="slider-val" id="font-scale-val">1.00</span>
           </div>
-          <input type="range" id="font-scale" class="slider" min="0.5" max="3" step="0.05" value="1">
+          <input type="range" id="font-scale" class="slider" min="0.5" max="3" step="0.05" value="1" aria-label="Font scale">
 
           <div class="slider-row">
             <div class="slider-label">
@@ -110,7 +110,7 @@
             </div>
             <span class="slider-val" id="char-spacing-val">1.00</span>
           </div>
-          <input type="range" id="char-spacing" class="slider" min="0.5" max="3" step="0.05" value="1">
+          <input type="range" id="char-spacing" class="slider" min="0.5" max="3" step="0.05" value="1" aria-label="Character spacing">
 
           <div class="slider-row">
             <div class="slider-label">
@@ -119,7 +119,7 @@
             </div>
             <span class="slider-val" id="line-height-val">1.20</span>
           </div>
-          <input type="range" id="line-height" class="slider" min="0.8" max="2" step="0.05" value="1.2">
+          <input type="range" id="line-height" class="slider" min="0.8" max="2" step="0.05" value="1.2" aria-label="Line height">
 
           <div class="slider-row">
             <div class="slider-label">
@@ -128,7 +128,7 @@
             </div>
             <span class="slider-val" id="contrast-val">1.00</span>
           </div>
-          <input type="range" id="contrast" class="slider" min="0" max="3" step="0.05" value="1">
+          <input type="range" id="contrast" class="slider" min="0" max="3" step="0.05" value="1" aria-label="Contrast">
 
           <div class="slider-row">
             <div class="slider-label">
@@ -137,7 +137,7 @@
             </div>
             <span class="slider-val" id="brightness-val">0.10</span>
           </div>
-          <input type="range" id="brightness" class="slider" min="0" max="2" step="0.05" value="0.1">
+          <input type="range" id="brightness" class="slider" min="0" max="2" step="0.05" value="0.1" aria-label="Brightness">
         </div>
 
         <!-- 6. Toggles -->
@@ -154,7 +154,7 @@
               Invert
             </div>
             <label class="toggle-switch">
-              <input type="checkbox" id="invert-toggle">
+              <input type="checkbox" id="invert-toggle" aria-label="Invert colors">
               <div class="toggle-track"><div class="toggle-thumb"></div></div>
             </label>
           </div>
@@ -166,7 +166,7 @@
               Overlay Original
             </div>
             <label class="toggle-switch">
-              <input type="checkbox" id="overlay-toggle" checked>
+              <input type="checkbox" id="overlay-toggle" aria-label="Overlay original image" checked>
               <div class="toggle-track"><div class="toggle-thumb"></div></div>
             </label>
           </div>
@@ -175,12 +175,12 @@
               <div class="slider-label">Opacity</div>
               <span class="slider-val" id="overlay-opacity-val">0.50</span>
             </div>
-            <input type="range" id="overlay-opacity" class="slider" min="0" max="1" step="0.01" value="0.5">
+            <input type="range" id="overlay-opacity" class="slider" min="0" max="1" step="0.01" value="0.5" aria-label="Overlay opacity">
             <div class="slider-row">
               <div class="slider-label">Blur</div>
               <span class="slider-val" id="overlay-blur-val">0</span>
             </div>
-            <input type="range" id="overlay-blur" class="slider" min="0" max="20" step="0.5" value="0">
+            <input type="range" id="overlay-blur" class="slider" min="0" max="20" step="0.5" value="0" aria-label="Overlay blur strength">
           </div>
 
           <!-- Edge Detection -->
@@ -190,7 +190,7 @@
               Edge Detection
             </div>
             <label class="toggle-switch">
-              <input type="checkbox" id="edge-toggle" checked>
+              <input type="checkbox" id="edge-toggle" aria-label="Edge detection" checked>
               <div class="toggle-track"><div class="toggle-thumb"></div></div>
             </label>
           </div>
@@ -199,7 +199,7 @@
               <div class="slider-label">Intensity</div>
               <span class="slider-val" id="edge-intensity-val">0.50</span>
             </div>
-            <input type="range" id="edge-intensity" class="slider" min="0" max="1" step="0.01" value="0.5">
+            <input type="range" id="edge-intensity" class="slider" min="0" max="1" step="0.01" value="0.5" aria-label="Edge detection intensity">
           </div>
         </div>
 
@@ -208,7 +208,7 @@
           <div class="section-label">
             <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1" fill="none"/><circle cx="3.5" cy="4.5" r="1" fill="currentColor"/><circle cx="7.5" cy="4.5" r="1" fill="currentColor"/><circle cx="5.5" cy="7.5" r="1" fill="currentColor"/></svg>
             Color
-            <button class="original-btn" id="btn-original-color">Original</button>
+            <button type="button" class="original-btn" id="btn-original-color">Original</button>
           </div>
           <div class="color-palette" id="color-palette">
             <div class="color-swatch active" data-color="#ffffff" style="background:#ffffff;" title="White"></div>
@@ -251,7 +251,7 @@
               <span class="pro-badge">PRO</span>
             </div>
             <label class="toggle-switch">
-              <input type="checkbox" id="char-bg-toggle">
+              <input type="checkbox" id="char-bg-toggle" aria-label="Character background">
               <div class="toggle-track"><div class="toggle-thumb"></div></div>
             </label>
           </div>
@@ -266,7 +266,7 @@
               <span class="pro-badge">PRO</span>
             </div>
             <label class="toggle-switch">
-              <input type="checkbox" id="tone-map-toggle">
+              <input type="checkbox" id="tone-map-toggle" aria-label="Tone color map">
               <div class="toggle-track"><div class="toggle-thumb"></div></div>
             </label>
           </div>
