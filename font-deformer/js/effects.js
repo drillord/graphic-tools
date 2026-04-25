@@ -47,12 +47,13 @@ window.Effects = (() => {
     const out = copy(imgData);
 
     // 1. Horizontal slices
+    const t = Math.floor(time * 10); // discretize: max 10 state changes per animation-second
     const numSlices = Math.max(2, Math.floor(intensity * 24));
     for (let i = 0; i < numSlices; i++) {
-      const noise1 = hash(i, 0, time * 3 + 1);
-      const noise2 = hash(i, 1, time * 2 + 7);
+      const noise1 = hash(i, 0, t + 1);
+      const noise2 = hash(i, 1, t + 7);
       const sliceY  = Math.floor(noise1 * h);
-      const sliceH  = Math.max(1, Math.floor(Math.abs(Math.sin(time + i)) * 18 * intensity));
+      const sliceH  = Math.max(1, Math.floor(Math.abs(Math.sin(t * 0.1 + i)) * 18 * intensity));
       const shiftX  = Math.floor((noise2 - 0.5) * 2 * w * 0.3 * intensity);
 
       for (let y = sliceY; y < Math.min(sliceY + sliceH, h); y++) {
@@ -171,42 +172,6 @@ window.Effects = (() => {
   }
 
   /* ─────────────────────────────────────────────────────────
-     PIXEL SORT — sort columns by luminance, threshold-gated
-     ───────────────────────────────────────────────────────── */
-  function pixelSort(imgData, w, h, intensity, time) {
-    const out = copy(imgData);
-    const threshold = 1 - intensity * 0.85; // lower threshold = more pixels sorted
-    const lum = (r, g, b) => (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-    for (let x = 0; x < w; x++) {
-      // collect pixels in this column above threshold
-      let start = -1;
-      for (let y = 0; y <= h; y++) {
-        const di = (y * w + x) * 4;
-        const bright = y < h ? lum(out[di], out[di+1], out[di+2]) : -1;
-        const above = bright > threshold;
-
-        if (above && start === -1) { start = y; }
-        else if (!above && start !== -1) {
-          // sort slice [start, y)
-          const slice = [];
-          for (let sy = start; sy < y; sy++) {
-            const si = (sy * w + x) * 4;
-            slice.push({ l: lum(out[si], out[si+1], out[si+2]), r: out[si], g: out[si+1], b: out[si+2], a: out[si+3] });
-          }
-          slice.sort((a, b) => a.l - b.l);
-          for (let j = 0; j < slice.length; j++) {
-            const di = ((start + j) * w + x) * 4;
-            out[di] = slice[j].r; out[di+1] = slice[j].g; out[di+2] = slice[j].b; out[di+3] = slice[j].a;
-          }
-          start = -1;
-        }
-      }
-    }
-    return new ImageData(out, w, h);
-  }
-
-  /* ─────────────────────────────────────────────────────────
      VHS — scanlines + color bleed + jitter + vignette
      ───────────────────────────────────────────────────────── */
   function vhs(imgData, w, h, intensity, time) {
@@ -265,6 +230,6 @@ window.Effects = (() => {
   /* ─────────────────────────────────────────────────────────
      Public API
      ───────────────────────────────────────────────────────── */
-  return { glitch, wave, distortion, noise, chromaticAberration, pixelSort, vhs };
+  return { glitch, wave, distortion, noise, chromaticAberration, vhs };
 
 })();

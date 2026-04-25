@@ -30,7 +30,6 @@
       distortion:{ enabled: false, intensity: 0.5 },
       noise:     { enabled: false, intensity: 0.5 },
       chromatic: { enabled: false, intensity: 0.5 },
-      pixelSort: { enabled: false, intensity: 0.5 },
       vhs:       { enabled: false, intensity: 0.5 },
     },
 
@@ -40,7 +39,6 @@
       distortion:{ label: 'Distortion',          fn: 'distortion' },
       noise:     { label: 'Film Grain',          fn: 'noise' },
       chromatic: { label: 'Chromatic Aberration',fn: 'chromaticAberration' },
-      pixelSort: { label: 'Pixel Sort',          fn: 'pixelSort' },
       vhs:       { label: 'VHS',                 fn: 'vhs' },
     },
 
