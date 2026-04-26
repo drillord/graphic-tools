@@ -21,7 +21,7 @@
     invert:       false,
 
     overlayEnabled: true,
-    overlayOpacity: 1.0,
+    overlayOpacity: 0.5,
     overlayBlur:    0,
 
     edgeEnabled:    true,
@@ -309,7 +309,7 @@
         render();
       });
     }
-    bindSlider('edge-intensity', null, () => '', v => { state.edgeIntensity = v; });
+    bindSlider('edge-intensity', 'edge-intensity-val', () => state.edgeIntensity.toFixed(2), v => { state.edgeIntensity = v; });
 
     /* Color palette */
     buildPalette('color-palette', c => {
